@@ -1,0 +1,5 @@
+<!-- logo-cross.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="none">
+  <rect rx="6" width="24" height="24" fill="#E6FFFA"/>
+  <path d="M10 6h4v12h-4zM6 10h12v4H6z" fill="#2C7A7B"/>
+</svg>

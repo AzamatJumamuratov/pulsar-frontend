@@ -1,0 +1,5 @@
+<!-- avatar-flat.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24" fill="none">
+  <rect width="24" height="24" rx="12" fill="#EDF2F7"/>
+  <path d="M12 12a3 3 0 100-6 3 3 0 000 6zM5 18c0-2.5 3.5-4 7-4s7 1.5 7 4v1H5v-1z" fill="#718096"/>
+</svg>

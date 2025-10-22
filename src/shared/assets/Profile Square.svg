@@ -1,0 +1,6 @@
+<!-- avatar-default-square.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24" fill="none">
+  <rect width="24" height="24" rx="4" fill="#E2E8F0"/>
+  <circle cx="12" cy="9" r="3" fill="#A0AEC0"/>
+  <path d="M6 18c0-2.5 3-4 6-4s6 1.5 6 4v1H6v-1z" fill="#A0AEC0"/>
+</svg>
