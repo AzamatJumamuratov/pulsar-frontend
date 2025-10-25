@@ -1,4 +1,4 @@
-import api from "@/app/api";
+// import api from "@/app/api";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { Profile, ProfileState } from "./types";
 
