@@ -1,7 +1,7 @@
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { Button, Dialog, Flex, Text, IconButton } from "@chakra-ui/react";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
-import type { PatientData } from "../PatientsTable";
+import { type PatientData } from "@/entities/patient/model/types";
 
 interface ShowMoreDialogProps {
   patientData: PatientData;
