@@ -1,17 +1,28 @@
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { Button, Dialog, Flex, Text, IconButton } from "@chakra-ui/react";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
+import type { PatientData } from "../PatientsTable";
 
-export function ShowMoreDialog() {
+interface ShowMoreDialogProps {
+  patientData: PatientData;
+}
+
+export default function ShowMoreDialog({ patientData }: ShowMoreDialogProps) {
   const labelColor = useColorModeValue("gray.600", "gray.400");
   const valueColor = useColorModeValue("gray.900", "gray.100");
   const titleColor = useColorModeValue("gray.800", "gray.100");
-  const bgColor = useColorModeValue("white", "gray.800");
+  const bgColor = useColorModeValue("white", "graya.800");
 
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <IconButton aria-label="Показать подробнее">
+        <IconButton
+          aria-label="Показать подробнее"
+          padding={2}
+          backgroundColor={"teal"}
+          color={"white"}
+          asChild
+        >
           <MdOutlineRemoveRedEye />
         </IconButton>
       </Dialog.Trigger>
@@ -34,12 +45,12 @@ export function ShowMoreDialog() {
           <Dialog.Body>
             <Flex direction="column" gap={3}>
               {[
-                ["ФИО", "Аширепов Акканат Жамбул улы"],
-                ["Тел. номер", "+998 90 123 45 67"],
-                ["Врач", "Джураев Алишер Ахмадович"],
-                ["Дата рождения", "12.03.1997"],
-                ["Наименование", "Общий анализ крови"],
-                ["Сумма", "150 000 сум"],
+                ["ФИО", patientData.fullName],
+                ["Тел. номер", patientData.phone],
+                ["Врач", patientData.assignedDoctor],
+                ["Дата рождения", patientData.birthDate],
+                ["Наименование", patientData.appointment],
+                ["Сумма", patientData.total_money + " Сумм"],
               ].map(([label, value]) => (
                 <Flex
                   key={label}

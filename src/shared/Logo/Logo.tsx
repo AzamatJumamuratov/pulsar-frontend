@@ -6,7 +6,7 @@ const Logo = () => {
     <HStack gap={4}>
       <Image src={LogoSVG} alt="Clinic Logo" boxSize="40px" />
       <Text fontSize="xl" fontWeight="bold" color="teal.600">
-        MedicaPlus Clinic
+        Pulsar
       </Text>
     </HStack>
   );
