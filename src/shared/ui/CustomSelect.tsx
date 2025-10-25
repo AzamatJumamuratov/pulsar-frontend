@@ -1,7 +1,7 @@
 // src/components/shared/CustomSelect.tsx
 "use client";
 
-import { Portal, Select, createListCollection } from "@chakra-ui/react";
+import { Select, createListCollection } from "@chakra-ui/react";
 
 interface Option {
   label: string;
