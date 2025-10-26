@@ -19,9 +19,12 @@ import {
   FiCalendar,
   FiMessageSquare,
   FiDollarSign,
+  FiEdit2,
+  FiX,
 } from "react-icons/fi";
 import ShowMoreAppointment from "./ShowMoreAppoiment";
 import api from "@/app/api";
+import { FormattedNumberInput } from "@/shared/ui/FormattedNumberInput";
 
 const AppointmentsList = () => {
   const dispatch = useAppDispatch();
@@ -32,6 +35,9 @@ const AppointmentsList = () => {
   } = useAppSelector((s) => s.appointments);
 
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editedCost, setEditedCost] = useState<string>("");
+  const [savingId, setSavingId] = useState<number | null>(null);
 
   useEffect(() => {
     dispatch(fetchAppointmentsList());
@@ -51,7 +57,7 @@ const AppointmentsList = () => {
         duration: 2000,
       });
       await dispatch(fetchAppointmentsList());
-    } catch (error) {
+    } catch {
       toaster.create({
         title: `Не удалось подтвердить приём #${id}`,
         type: "error",
@@ -60,6 +66,59 @@ const AppointmentsList = () => {
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleSaveCost = async (id: number) => {
+    const parsed = Number(
+      String(editedCost).replace(/\s+/g, "").replace(/,/g, ".")
+    );
+    if (!isFinite(parsed) || parsed < 0) {
+      toaster.create({
+        title: "Неверная сумма",
+        description: "Введите корректное числовое значение стоимости.",
+        type: "error",
+        duration: 3500,
+      });
+      return;
+    }
+
+    try {
+      setSavingId(id);
+      const payload = { cost: parsed };
+      const res = await api.patch(`/appointments/my/${id}/cost`, payload);
+
+      toaster.create({
+        title: "Стоимость обновлена",
+        description: `Новая стоимость: ${Number(
+          res.data.cost ?? parsed
+        ).toLocaleString()} сум`,
+        type: "success",
+        duration: 2500,
+      });
+
+      setEditingId(null);
+      setEditedCost("");
+      await dispatch(fetchAppointmentsList());
+    } catch (err: any) {
+      const detail =
+        err?.response?.data?.detail ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Не удалось изменить стоимость. Попробуйте ещё раз.";
+      toaster.create({
+        title: "Ошибка при сохранении",
+        description: String(detail),
+        type: "error",
+        duration: 4000,
+      });
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditedCost("");
   };
 
   if (loading)
@@ -100,6 +159,8 @@ const AppointmentsList = () => {
           const statusText = a.status === "done" ? "Завершён" : "Запланирован";
 
           const isUpdating = updatingId === a.id;
+          const isEditing = editingId === a.id;
+          const isSaving = savingId === a.id;
 
           return (
             <Card.Root
@@ -112,16 +173,20 @@ const AppointmentsList = () => {
               _hover={{ boxShadow: "md", transform: "translateY(-2px)" }}
               transition="all 0.2s ease"
               opacity={isUpdating ? 0.6 : 1}
-              pointerEvents={isUpdating ? "none" : "auto"}
+              position="relative"
             >
-              {isUpdating && (
+              {(isUpdating || isSaving) && (
                 <Flex
                   justify="center"
                   align="center"
                   position="absolute"
                   inset={0}
-                  bg="rgba(0,0,0,0.05)"
+                  bg={useColorModeValue(
+                    "rgba(255,255,255,0.6)",
+                    "rgba(0,0,0,0.5)"
+                  )}
                   borderRadius="xl"
+                  zIndex={2}
                 >
                   <Spinner size="lg" />
                 </Flex>
@@ -150,11 +215,58 @@ const AppointmentsList = () => {
                   <Text fontSize="sm">{a.notes || "Без заметок"}</Text>
                 </Flex>
 
-                <Flex align="center">
-                  <FiDollarSign style={{ marginRight: 6 }} />
-                  <Text fontSize="sm" fontWeight="medium">
-                    {a.cost.toLocaleString()} сум
-                  </Text>
+                <Flex align="center" justify="space-between">
+                  <Flex align="center">
+                    <FiDollarSign style={{ marginRight: 6 }} />
+                    {isEditing ? (
+                      <FormattedNumberInput
+                        size="sm"
+                        value={editedCost}
+                        onChange={(val) => setEditedCost(String(val))}
+                        w="100px"
+                        disabled={isSaving}
+                      />
+                    ) : (
+                      <Text fontSize="sm" fontWeight="medium">
+                        {Number(a.cost).toLocaleString("ru-RU")} сум
+                      </Text>
+                    )}
+                  </Flex>
+
+                  {isEditing ? (
+                    <Flex gap={1}>
+                      <IconButton
+                        aria-label="Сохранить"
+                        size="xs"
+                        colorScheme="green"
+                        onClick={() => handleSaveCost(a.id)}
+                        disabled={isSaving}
+                      >
+                        <FiCheck />
+                      </IconButton>
+                      <IconButton
+                        aria-label="Отменить"
+                        size="xs"
+                        colorScheme="red"
+                        onClick={handleCancelEdit}
+                        disabled={isSaving}
+                      >
+                        <FiX />
+                      </IconButton>
+                    </Flex>
+                  ) : (
+                    <IconButton
+                      aria-label="Редактировать стоимость"
+                      size="xs"
+                      variant="ghost"
+                      onClick={() => {
+                        setEditingId(a.id);
+                        setEditedCost(String(a.cost));
+                      }}
+                    >
+                      <FiEdit2 />
+                    </IconButton>
+                  )}
                 </Flex>
               </Card.Body>
 

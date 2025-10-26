@@ -7,7 +7,6 @@ export interface PatientData {
   phone: string;
   passport: string;
   address: string;
-  email: string;
   created_at: string;
 }
 

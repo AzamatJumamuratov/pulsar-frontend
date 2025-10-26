@@ -12,6 +12,7 @@ import { useColorModeValue } from "@/components/ui/color-mode";
 import { useForm } from "react-hook-form";
 import { toaster } from "@/components/ui/toaster";
 import api from "@/app/api";
+import { FormattedNumberInput } from "@/shared/ui/FormattedNumberInput";
 
 interface AppointmentForm {
   doctor_id: string;
@@ -33,6 +34,8 @@ export default function AddAppointment() {
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<AppointmentForm>();
 
@@ -130,19 +133,21 @@ export default function AddAppointment() {
           )}
 
           {/* Стоимость */}
-          <Input
-            type="number"
-            placeholder="Стоимость (сум)"
-            {...register("cost", {
-              required: "Укажите стоимость приёма",
-              min: { value: 1000, message: "Минимум 1000 сум" },
-            })}
-          />
-          {errors.cost && (
-            <Box color="red.500" fontSize="sm">
-              {errors.cost.message}
-            </Box>
-          )}
+
+          <Box>
+            <FormattedNumberInput
+              placeholder="Стоимость (сум)"
+              value={watch("cost")}
+              onChange={(val) =>
+                setValue("cost", Number(val), { shouldValidate: true })
+              }
+            />
+            {errors.cost && (
+              <Box color="red.500" fontSize="sm">
+                {errors.cost.message}
+              </Box>
+            )}
+          </Box>
 
           {/* Заметки */}
           <Textarea

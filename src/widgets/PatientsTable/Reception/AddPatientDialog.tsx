@@ -19,7 +19,6 @@ interface PatientFormValues {
   phone: string;
   passport: string;
   address: string;
-  // email временно убираем, но генерируем автоматически
 }
 
 const genderOptions = [
@@ -43,17 +42,9 @@ export default function AddPatientDialog() {
     register("gender", { required: "Выберите пол" });
   }, [register]);
 
-  // Простая функция генерации случайного email
-  const generateRandomEmail = () => {
-    const randomPart = Math.random().toString(36).substring(2, 10);
-    return `user_${randomPart}@temp.uz`;
-  };
-
   const onSubmit = async (data: PatientFormValues) => {
     try {
-      const payload = { ...data, email: generateRandomEmail() };
-
-      const response = await api.post("/patients/", payload);
+      const response = await api.post("/patients/", data);
 
       toaster.create({
         description: `Пациент ${response.data.full_name} успешно добавлен.`,

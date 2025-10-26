@@ -20,7 +20,6 @@ export default function ShowMoreDialog({ patientData }: ShowMoreDialogProps) {
     ["Телефон", patientData.phone],
     ["Паспорт", patientData.passport],
     ["Адрес", patientData.address],
-    ["Email", patientData.email],
     [
       "Дата регистрации",
       new Date(patientData.created_at).toLocaleString("ru-RU"),

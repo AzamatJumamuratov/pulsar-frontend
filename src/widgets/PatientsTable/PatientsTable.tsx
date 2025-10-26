@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 import { FaRegEdit } from "react-icons/fa";
-import { MdDeleteOutline, MdFileDownloadDone } from "react-icons/md";
+import { MdDeleteOutline } from "react-icons/md";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 
 import ShowMoreDialog from "./Reception/ShowMoreDialog";
@@ -45,9 +45,7 @@ export default function PatientsTable() {
           mb={4}
         >
           <SkeletonText noOfLines={1} height="20px" width="150px" />
-          {profile?.role === "reception" && (
-            <Skeleton height="36px" width="160px" />
-          )}
+          <Skeleton height="36px" width="160px" />
         </Box>
 
         <Box borderWidth="1px" borderRadius="lg" overflow="hidden">
@@ -83,7 +81,7 @@ export default function PatientsTable() {
         <Text fontWeight="bold" fontSize="lg">
           Список Пациентов
         </Text>
-        {profile.role === "reception" && <AddPatientDialog />}
+        <AddPatientDialog />
       </Box>
 
       <Table.Root size="md" variant="outline">
@@ -111,20 +109,12 @@ export default function PatientsTable() {
                 alignItems="center"
               >
                 <ShowMoreDialog patientData={item} />
-                {profile.role == "reception" ? (
-                  <>
-                    <IconButton backgroundColor={"teal"} color={"white"}>
-                      <FaRegEdit />
-                    </IconButton>
-                    <IconButton backgroundColor={"teal"} color={"white"}>
-                      <MdDeleteOutline />
-                    </IconButton>
-                  </>
-                ) : (
-                  <IconButton backgroundColor={"teal"} color={"white"}>
-                    <MdFileDownloadDone />
-                  </IconButton>
-                )}
+                <IconButton backgroundColor={"teal"} color={"white"}>
+                  <FaRegEdit />
+                </IconButton>
+                <IconButton backgroundColor={"teal"} color={"white"}>
+                  <MdDeleteOutline />
+                </IconButton>
               </Table.Cell>
             </Table.Row>
           ))}
