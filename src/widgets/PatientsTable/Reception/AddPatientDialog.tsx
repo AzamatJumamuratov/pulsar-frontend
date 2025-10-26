@@ -1,4 +1,3 @@
-// src/widgets/AddPatientDialog.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -20,7 +19,7 @@ interface PatientFormValues {
   phone: string;
   passport: string;
   address: string;
-  email: string;
+  // email временно убираем, но генерируем автоматически
 }
 
 const genderOptions = [
@@ -40,14 +39,21 @@ export default function AddPatientDialog() {
     formState: { isSubmitting, errors },
   } = useForm<PatientFormValues>();
 
-  // Регистрируем скрытое поле gender для react-hook-form (валидация)
   useEffect(() => {
     register("gender", { required: "Выберите пол" });
   }, [register]);
 
+  // Простая функция генерации случайного email
+  const generateRandomEmail = () => {
+    const randomPart = Math.random().toString(36).substring(2, 10);
+    return `user_${randomPart}@temp.uz`;
+  };
+
   const onSubmit = async (data: PatientFormValues) => {
     try {
-      const response = await api.post("/patients/", data);
+      const payload = { ...data, email: generateRandomEmail() };
+
+      const response = await api.post("/patients/", payload);
 
       toaster.create({
         description: `Пациент ${response.data.full_name} успешно добавлен.`,
@@ -55,19 +61,9 @@ export default function AddPatientDialog() {
         closable: true,
       });
 
-      // Закрываем диалог
       setIsOpen(false);
-
-      // Сбрасываем форму
       reset();
-
-      // Обновляем список пациентов (без перезагрузки страницы)
-      try {
-        dispatch(fetchPatients());
-      } catch {
-        // если dispatch по какой-то причине не сработал — можно как fallback перезагрузить страницу
-        // window.location.reload();
-      }
+      dispatch(fetchPatients());
     } catch (error: any) {
       const detail =
         error?.response?.data?.detail ||
@@ -168,6 +164,7 @@ export default function AddPatientDialog() {
                   error={errors.address}
                 />
 
+                {/* 
                 <ValidatedInput
                   label="Email"
                   type="email"
@@ -181,6 +178,7 @@ export default function AddPatientDialog() {
                   })}
                   error={errors.email}
                 />
+                */}
               </VStack>
             </Dialog.Body>
 

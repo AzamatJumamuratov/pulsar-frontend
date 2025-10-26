@@ -92,7 +92,7 @@ export default function PatientsTable() {
             <Table.ColumnHeader>ID</Table.ColumnHeader>
             <Table.ColumnHeader>Фамилия и Имя</Table.ColumnHeader>
             <Table.ColumnHeader>Телефон Номер</Table.ColumnHeader>
-            <Table.ColumnHeader>Сумма</Table.ColumnHeader>
+            <Table.ColumnHeader>Паспорт</Table.ColumnHeader>
             <Table.ColumnHeader>Действия</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
@@ -103,7 +103,7 @@ export default function PatientsTable() {
               <Table.Cell>{item.id}</Table.Cell>
               <Table.Cell>{item.full_name}</Table.Cell>
               <Table.Cell>{item.phone}</Table.Cell>
-              <Table.Cell>{item.email}</Table.Cell>
+              <Table.Cell>{item.passport}</Table.Cell>
               <Table.Cell
                 display="flex"
                 gap={4}
