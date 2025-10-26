@@ -101,7 +101,6 @@ export default function ShowMoreAppointment({
                     Телефон: patient.phone,
                     Паспорт: patient.passport,
                     Адрес: patient.address,
-                    "Эл. почта": patient.email,
                     UID: patient.patient_uid,
                     Создан: new Date(patient.created_at).toLocaleString(),
                   }).map(([label, value]) => (
