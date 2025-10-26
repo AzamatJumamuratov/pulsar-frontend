@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, IconButton } from "@chakra-ui/react";
+import { Box, Flex, HStack, IconButton } from "@chakra-ui/react";
 import { ColorModeButton, useColorModeValue } from "@/components/ui/color-mode";
 import Logo from "@/shared/Logo/Logo";
 import { Wrapper } from "@/shared/Wrapper";
