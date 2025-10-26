@@ -13,19 +13,29 @@ import LoginPage from "@/pages/Auth/LoginPage";
 import RegisterPage from "@/pages/Auth/RegisterPage";
 import { Toaster } from "@/components/ui/toaster";
 import Test from "@/pages/Test";
+import ProtectedRoute from "@/shared/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    Component: Layout,
+    element: <ProtectedRoute />, // защищаем маршруты
     children: [
       {
-        path: "reception",
-        Component: ReceptionPage,
-      },
-      {
-        path: "doctor",
-        Component: DoctorPage,
+        path: "/",
+        Component: Layout,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="/auth/login" replace />,
+          },
+          {
+            path: "reception",
+            Component: ReceptionPage,
+          },
+          {
+            path: "doctor",
+            Component: DoctorPage,
+          },
+        ],
       },
     ],
   },
@@ -41,25 +51,12 @@ const router = createBrowserRouter([
     path: "/auth",
     Component: AuthLayout,
     children: [
-      {
-        index: true,
-        element: <Navigate to="login" replace />,
-      },
-      {
-        index: true,
-        path: "login",
-        Component: LoginPage,
-      },
-      {
-        path: "register",
-        Component: RegisterPage,
-      },
+      { index: true, element: <Navigate to="login" replace /> },
+      { path: "login", Component: LoginPage },
+      { path: "register", Component: RegisterPage },
     ],
   },
-  {
-    path: "/test",
-    Component: Test,
-  },
+  { path: "/test", Component: Test },
 ]);
 
 const Root = () => {

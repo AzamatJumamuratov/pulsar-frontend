@@ -40,7 +40,7 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormValues) => {
     try {
-      await registerUser(data);
+      const response = await registerUser(data);
 
       toaster.create({
         title: "Регистрация успешна",
@@ -49,7 +49,11 @@ export default function RegisterPage() {
         duration: 4000,
       });
 
-      navigate("/");
+      if (response.role == "reception") {
+        navigate("/reception");
+      } else if (response.role == "doctor") {
+        navigate("/doctor");
+      }
     } catch (error: any) {
       toaster.create({
         title: "Ошибка регистрации",
