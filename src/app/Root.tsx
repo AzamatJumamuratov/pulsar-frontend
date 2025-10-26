@@ -11,6 +11,8 @@ import DoctorPage from "@/pages/DoctorPage/DoctorPage";
 import AuthLayout from "./AuthLayout";
 import LoginPage from "@/pages/Auth/LoginPage";
 import RegisterPage from "@/pages/Auth/RegisterPage";
+import { Toaster } from "@/components/ui/toaster";
+import Test from "@/pages/Test";
 
 const router = createBrowserRouter([
   {
@@ -18,7 +20,7 @@ const router = createBrowserRouter([
     Component: Layout,
     children: [
       {
-        index: true,
+        path: "reception",
         Component: ReceptionPage,
       },
       {
@@ -26,6 +28,14 @@ const router = createBrowserRouter([
         Component: DoctorPage,
       },
     ],
+  },
+  {
+    path: "/login",
+    element: <Navigate to="/auth/login" replace />,
+  },
+  {
+    path: "/register",
+    element: <Navigate to="/auth/register" replace />,
   },
   {
     path: "/auth",
@@ -46,12 +56,17 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/test",
+    Component: Test,
+  },
 ]);
 
 const Root = () => {
   return (
     <ChakraProvider>
       <ReduxProvider store={store}>
+        <Toaster />
         <RouterProvider router={router} />
       </ReduxProvider>
     </ChakraProvider>

@@ -11,7 +11,21 @@ export default function ShowMoreDialog({ patientData }: ShowMoreDialogProps) {
   const labelColor = useColorModeValue("gray.600", "gray.400");
   const valueColor = useColorModeValue("gray.900", "gray.100");
   const titleColor = useColorModeValue("gray.800", "gray.100");
-  const bgColor = useColorModeValue("white", "graya.800");
+  const bgColor = useColorModeValue("white", "gray.800");
+
+  const patientInfo = [
+    ["ФИО", patientData.full_name],
+    ["Дата рождения", new Date(patientData.birth_date).toLocaleDateString()],
+    ["Пол", patientData.gender === "male" ? "Мужской" : "Женский"],
+    ["Телефон", patientData.phone],
+    ["Паспорт", patientData.passport],
+    ["Адрес", patientData.address],
+    ["Email", patientData.email],
+    [
+      "Дата регистрации",
+      new Date(patientData.created_at).toLocaleString("ru-RU"),
+    ],
+  ];
 
   return (
     <Dialog.Root>
@@ -19,8 +33,8 @@ export default function ShowMoreDialog({ patientData }: ShowMoreDialogProps) {
         <IconButton
           aria-label="Показать подробнее"
           padding={2}
-          backgroundColor={"teal"}
-          color={"white"}
+          backgroundColor="teal"
+          color="white"
           asChild
         >
           <MdOutlineRemoveRedEye />
@@ -38,20 +52,13 @@ export default function ShowMoreDialog({ patientData }: ShowMoreDialogProps) {
         >
           <Dialog.Header>
             <Dialog.Title fontSize="xl" fontWeight="bold" color={titleColor}>
-              Информация о клиенте
+              Информация о пациенте
             </Dialog.Title>
           </Dialog.Header>
 
           <Dialog.Body>
             <Flex direction="column" gap={3}>
-              {[
-                ["ФИО", patientData.fullName],
-                ["Тел. номер", patientData.phone],
-                ["Врач", patientData.assignedDoctor],
-                ["Дата рождения", patientData.birthDate],
-                ["Наименование", patientData.appointment],
-                ["Сумма", patientData.total_money + " Сумм"],
-              ].map(([label, value]) => (
+              {patientInfo.map(([label, value]) => (
                 <Flex
                   key={label}
                   justify="space-between"

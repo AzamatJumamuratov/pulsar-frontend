@@ -1,37 +1,32 @@
-import { Box, Flex, Text, Button, VStack } from "@chakra-ui/react";
-import ProfileInfo from "@/widgets/ProfileInfo";
-import { Wrapper } from "@/shared/Wrapper";
-import PatientsTable from "@/widgets/PatientsTable/PatientsTable";
-
+import { Box, Flex, VStack, Text, Button } from "@chakra-ui/react";
 import { useEffect } from "react";
+import { MdRefresh } from "react-icons/md";
+import ProfileInfo from "@/widgets/ProfileInfo";
+import PatientsTable from "@/widgets/PatientsTable/PatientsTable";
+import AddAppointment from "@/widgets/PatientsTable/Reception/AddAppointment";
 import { useAppDispatch, useAppSelector } from "@/shared/model/hooks";
 import { fetchProfile } from "@/entities/profile/model/profileSlice";
 import { fetchPatients } from "@/entities/patient/model/patientsSlice";
-import { MdRefresh } from "react-icons/md";
-
 import { useColorModeValue } from "@/components/ui/color-mode";
+import { fetchDoctorsList } from "@/entities/doctorsList/model/doctorsSlice";
 
 const ReceptionPage = () => {
   const dispatch = useAppDispatch();
   const { error: profileError } = useAppSelector((s) => s.profile);
   const { error: patientsError } = useAppSelector((s) => s.patients);
+  const { error: doctorsListError } = useAppSelector((s) => s.doctorsList);
 
-  const hasError = profileError || patientsError;
+  const hasError = profileError || patientsError || doctorsListError;
 
   useEffect(() => {
     dispatch(fetchProfile());
     dispatch(fetchPatients());
+    dispatch(fetchDoctorsList());
   }, [dispatch]);
 
   if (hasError) {
     return (
-      <Flex
-        as="main"
-        align="center"
-        justify="center"
-        height="100vh"
-        direction="column"
-      >
+      <Flex align="center" justify="center" height="100%" direction="column">
         <VStack gap={6}>
           <Text
             fontSize="2xl"
@@ -41,14 +36,12 @@ const ReceptionPage = () => {
             Не удалось загрузить данные
           </Text>
           <Button
-            backgroundColor={"teal"}
-            colorScheme="red"
-            color={"white"}
+            colorScheme="teal"
             size="lg"
             onClick={() => window.location.reload()}
           >
             <MdRefresh />
-            Перезагрузить страницу
+            Перезагрузить
           </Button>
         </VStack>
       </Flex>
@@ -56,18 +49,30 @@ const ReceptionPage = () => {
   }
 
   return (
-    <Box as="main">
-      <Wrapper>
-        <Flex paddingTop={4}>
-          <Box width={256}>
-            <ProfileInfo />
-          </Box>
-          <Box flex={1}>
-            <PatientsTable />
-          </Box>
-        </Flex>
-      </Wrapper>
-    </Box>
+    <Flex
+      height="100%"
+      overflow="hidden"
+      bg={useColorModeValue("gray.50", "gray.900")}
+    >
+      {/* Левая колонка (сайдбар) */}
+      <Box
+        w="250px"
+        height="full"
+        flexShrink={0}
+        borderRightWidth="1px"
+        borderColor={useColorModeValue("gray.200", "gray.700")}
+        p={4}
+        overflowY="auto"
+      >
+        <ProfileInfo />
+      </Box>
+
+      {/* Правая колонка (контент) */}
+      <Box flex="1" overflowY="auto" p={4}>
+        <PatientsTable />
+        <AddAppointment />
+      </Box>
+    </Flex>
   );
 };
 

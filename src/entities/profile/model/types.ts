@@ -6,8 +6,11 @@ export const USER_ROLES: Record<UserRole, string> = {
 } as const;
 
 export interface Profile {
-  name: string;
+  id: number;
+  full_name: string;
   role: UserRole;
+  username: string;
+  email: string;
 }
 
 export interface ProfileState {

@@ -1,21 +1,29 @@
+"use client";
+
 import { Portal, Select, createListCollection } from "@chakra-ui/react";
+import type { UseFormSetValue } from "react-hook-form";
+import type { RegisterFormValues } from "@/pages/Auth/RegisterPage";
+import type { UserRole } from "@/entities/profile/model/types";
 
 const roles = createListCollection({
   items: [
-    { label: "Администратор", value: "admin" },
     { label: "Врач", value: "doctor" },
     { label: "Регистратор", value: "reception" },
   ],
 });
 
-const RoleSelect = ({ setValue }: { setValue: any }) => {
+interface RoleSelectProps {
+  setValue: UseFormSetValue<RegisterFormValues>;
+}
+
+const RoleSelect = ({ setValue }: RoleSelectProps) => {
   return (
     <Select.Root
       collection={roles}
       size="md"
       width="100%"
       multiple={false}
-      onValueChange={(e) => setValue("role", e.value)} // теперь e.value — string
+      onValueChange={(e) => setValue("role", e.value[0] as UserRole)} // ✅ теперь типобезопасно
     >
       <Select.HiddenSelect />
       <Select.Control>

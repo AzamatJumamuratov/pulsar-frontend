@@ -24,9 +24,11 @@ const ProfileInfo = () => {
           </>
         ) : (
           <>
-            <Text fontWeight="bold">{profile?.name ?? "—"}</Text>
+            <Text fontWeight="bold" textAlign={"center"}>
+              {profile?.full_name}
+            </Text>
             <Text color="gray.500">
-              {profile?.role ? USER_ROLES[profile.role] : "—"}
+              {profile?.role ? (USER_ROLES[profile.role] as string) : "—"}
             </Text>
           </>
         )}

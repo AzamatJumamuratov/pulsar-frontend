@@ -1,6 +1,7 @@
 // import api from "@/app/api";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { Profile, ProfileState } from "./types";
+import api from "@/app/api";
 
 const initialState: ProfileState = {
   data: null,
@@ -38,14 +39,10 @@ export const fetchProfile = createAsyncThunk<Profile>(
   "profile/fetchProfile",
   async (_, { rejectWithValue }) => {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // throw new Error("Сервер временно недоступен");
-
-      // Если бы ошибки не было, вернули бы профиль
-      return { name: "Иван Иванов", role: "doctor" };
+      const response = await api.get("/auth/profile");
+      return response.data;
     } catch (error: any) {
-      return rejectWithValue(error?.message || "Ошибка при загрузке профиля");
+      return rejectWithValue(error?.detail || "Ошибка при загрузке профиля");
     }
   }
 );

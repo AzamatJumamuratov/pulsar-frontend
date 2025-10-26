@@ -1,28 +1,53 @@
+// src/pages/auth/LoginPage.tsx
+"use client";
+
 import { useForm } from "react-hook-form";
 import { Box, Button, Heading, Text } from "@chakra-ui/react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import ValidatedInput from "@/features/auth/ui/ValidatedInput";
-
-interface LoginFormValues {
-  username: string;
-  password: string;
-}
+import { login, type LoginRequest } from "@/features/auth/api/loginApi";
+import { toaster } from "@/components/ui/toaster";
 
 const LoginPage = () => {
   const textColor = useColorModeValue("gray.800", "gray.100");
   const linkColor = useColorModeValue("teal.600", "teal.300");
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
+  } = useForm<LoginRequest>({
     defaultValues: { username: "", password: "" },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Отправляем данные:", data);
+  const onSubmit = async (data: LoginRequest) => {
+    try {
+      const response = await login(data);
+
+      toaster.create({
+        description: "Успешный вход.",
+        type: "success",
+        closable: true,
+      });
+
+      if (response.role == "reception") {
+        navigate("/reception");
+      } else if (response.role == "doctor") {
+        navigate("/doctor");
+      }
+    } catch (error: any) {
+      const message =
+        error?.message ||
+        error?.response?.data?.detail ||
+        "Ошибка при входе. Попробуйте позже.";
+
+      toaster.create({
+        description: String(message),
+        type: "error",
+        closable: true,
+      });
+    }
   };
 
   return (

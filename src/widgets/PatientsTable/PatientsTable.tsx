@@ -101,9 +101,9 @@ export default function PatientsTable() {
           {paginatedPatients.map((item) => (
             <Table.Row key={item.id}>
               <Table.Cell>{item.id}</Table.Cell>
-              <Table.Cell>{item.fullName}</Table.Cell>
+              <Table.Cell>{item.full_name}</Table.Cell>
               <Table.Cell>{item.phone}</Table.Cell>
-              <Table.Cell>{item.total_money}</Table.Cell>
+              <Table.Cell>{item.email}</Table.Cell>
               <Table.Cell
                 display="flex"
                 gap={4}

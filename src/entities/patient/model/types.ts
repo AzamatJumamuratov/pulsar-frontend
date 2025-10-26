@@ -1,11 +1,14 @@
 export interface PatientData {
   id: number;
-  fullName: string;
+  patient_uid: string;
+  full_name: string;
+  birth_date: string;
+  gender: GenderType;
   phone: string;
-  total_money: number;
-  birthDate: string;
-  assignedDoctor: string;
-  appointment: string;
+  passport: string;
+  address: string;
+  email: string;
+  created_at: string;
 }
 
 export interface PatientsState {
@@ -13,3 +16,5 @@ export interface PatientsState {
   loading: boolean;
   error: string | null;
 }
+
+export type GenderType = "male" | "female";

@@ -1,5 +1,6 @@
+// src/entities/patients/model/patientsSlice.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { mockPatients } from "./mockPatients";
+import api from "@/app/api";
 import type { PatientData, PatientsState } from "./types";
 
 const initialState: PatientsState = {
@@ -8,22 +9,24 @@ const initialState: PatientsState = {
   error: null,
 };
 
-export const fetchPatients = createAsyncThunk<PatientData[]>(
-  "patients/fetchPatients",
-  async (_, { rejectWithValue }) => {
-    try {
-      const patients = await new Promise<PatientData[]>((resolve) => {
-        setTimeout(() => {
-          resolve(mockPatients);
-        }, 2500);
-      });
-
-      return patients;
-    } catch (error: any) {
-      return rejectWithValue("Ошибка при загрузке списка пациентов");
-    }
+export const fetchPatients = createAsyncThunk<
+  PatientData[],
+  void,
+  { rejectValue: string }
+>("patients/fetchPatients", async (_, { rejectWithValue }) => {
+  try {
+    const response = await api.get<PatientData[]>("/patients/", {
+      params: { skip: 0, limit: 10 },
+    });
+    return response.data;
+  } catch (error: any) {
+    const detail =
+      error?.response?.data?.detail ||
+      error?.message ||
+      "Не удалось загрузить список пациентов.";
+    return rejectWithValue(detail);
   }
-);
+});
 
 const patientsSlice = createSlice({
   name: "patients",
@@ -46,7 +49,7 @@ const patientsSlice = createSlice({
       })
       .addCase(fetchPatients.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.error = action.payload || "Ошибка при загрузке пациентов.";
       });
   },
 });

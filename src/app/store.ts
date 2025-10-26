@@ -1,11 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import profileReducer from "@/entities/profile/model/profileSlice";
 import patientsReducer from "@/entities/patient/model/patientsSlice";
+import doctorsListReducer from "@/entities/doctorsList/model/doctorsSlice";
+import appointmentsReducer from "@/entities/appointments/model/appointmentsSlice";
 
 const store = configureStore({
   reducer: {
     profile: profileReducer,
     patients: patientsReducer,
+    appointments: appointmentsReducer,
+    doctorsList: doctorsListReducer,
   },
 });
 

@@ -1,15 +1,17 @@
 // src/widgets/AddPatientDialog.tsx
 "use client";
 
-import { Dialog, Button, Icon, HStack, VStack, Text } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import { Dialog, Button, Icon, VStack, Text } from "@chakra-ui/react";
 import { GoPlus } from "react-icons/go";
 import { RxCross1 } from "react-icons/rx";
 import { useForm } from "react-hook-form";
-// import { toaster } from "@/components/ui/toaster";
-// import api from "@/app/api";
+import api from "@/app/api";
 import CustomSelect from "@/shared/ui/CustomSelect";
 import ValidatedInput from "@/features/auth/ui/ValidatedInput";
-import { useEffect } from "react";
+import { toaster } from "@/components/ui/toaster";
+import { useAppDispatch } from "@/shared/model/hooks";
+import { fetchPatients } from "@/entities/patient/model/patientsSlice";
 
 interface PatientFormValues {
   full_name: string;
@@ -27,42 +29,67 @@ const genderOptions = [
 ];
 
 export default function AddPatientDialog() {
+  const dispatch = useAppDispatch();
+  const [isOpen, setIsOpen] = useState(false);
+
   const {
     register,
     handleSubmit,
     setValue,
-    // reset,
+    reset,
     formState: { isSubmitting, errors },
   } = useForm<PatientFormValues>();
 
+  // Регистрируем скрытое поле gender для react-hook-form (валидация)
   useEffect(() => {
     register("gender", { required: "Выберите пол" });
   }, [register]);
 
   const onSubmit = async (data: PatientFormValues) => {
-    console.log(data);
-    // try {
-    //   await api.post("/patients", data);
-    //   toaster.create({
-    //     description: "Пациент успешно добавлен",
-    //     type: "success",
-    //     closable: true,
-    //   });
-    //   reset();
-    // } catch (error: any) {
-    //   toaster.create({
-    //     description:
-    //       error?.response?.data?.message || "Ошибка при добавлении пациента",
-    //     type: "error",
-    //     closable: true,
-    //   });
-    // }
+    try {
+      const response = await api.post("/patients/", data);
+
+      toaster.create({
+        description: `Пациент ${response.data.full_name} успешно добавлен.`,
+        type: "success",
+        closable: true,
+      });
+
+      // Закрываем диалог
+      setIsOpen(false);
+
+      // Сбрасываем форму
+      reset();
+
+      // Обновляем список пациентов (без перезагрузки страницы)
+      try {
+        dispatch(fetchPatients());
+      } catch {
+        // если dispatch по какой-то причине не сработал — можно как fallback перезагрузить страницу
+        // window.location.reload();
+      }
+    } catch (error: any) {
+      const detail =
+        error?.response?.data?.detail ||
+        error?.response?.data?.message ||
+        error?.message ||
+        "Не удалось добавить пациента.";
+
+      toaster.create({
+        description: String(detail),
+        type: "error",
+        closable: true,
+      });
+    }
   };
 
   return (
-    <Dialog.Root>
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(details) => setIsOpen(details.open)}
+    >
       <Dialog.Trigger asChild>
-        <Button colorPalette="teal">
+        <Button colorPalette="teal" onClick={() => setIsOpen(true)}>
           Добавить
           <Icon as={GoPlus} ml={2} />
         </Button>
@@ -73,8 +100,8 @@ export default function AddPatientDialog() {
         <Dialog.Content maxW="650px" p={6}>
           <Dialog.Header fontWeight="bold">Добавление пациента</Dialog.Header>
 
-          <Dialog.CloseTrigger>
-            <Icon as={RxCross1} boxSize={4} />
+          <Dialog.CloseTrigger asChild>
+            <Icon as={RxCross1} boxSize={4} cursor="pointer" />
           </Dialog.CloseTrigger>
 
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -98,25 +125,21 @@ export default function AddPatientDialog() {
                   error={errors.birth_date}
                 />
 
-                <HStack align="center" alignItems="start">
-                  <VStack align="stretch" flex="1">
-                    <Text w="150px" fontWeight="medium">
-                      Пол
+                <VStack align="stretch">
+                  <Text fontWeight="medium">Пол</Text>
+                  <CustomSelect
+                    placeholder="Выберите пол"
+                    items={genderOptions}
+                    onChange={(value: string) =>
+                      setValue("gender", value, { shouldValidate: true })
+                    }
+                  />
+                  {errors.gender && (
+                    <Text color="red.500" fontSize="sm">
+                      {errors.gender.message}
                     </Text>
-                    <CustomSelect
-                      placeholder="Выберите пол"
-                      items={genderOptions}
-                      onChange={(value) =>
-                        setValue("gender", value, { shouldValidate: true })
-                      }
-                    />
-                    {errors.gender && (
-                      <Text color="red.500" fontSize="sm">
-                        {errors.gender.message}
-                      </Text>
-                    )}
-                  </VStack>
-                </HStack>
+                  )}
+                </VStack>
 
                 <ValidatedInput
                   label="Телефон"
@@ -151,6 +174,10 @@ export default function AddPatientDialog() {
                   placeholder="example@example.uz"
                   register={register("email", {
                     required: "Обязательное поле",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Некорректный email",
+                    },
                   })}
                   error={errors.email}
                 />
