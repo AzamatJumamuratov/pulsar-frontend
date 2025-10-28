@@ -10,16 +10,23 @@ interface Option {
 
 interface CustomSelectProps {
   placeholder: string;
+  defaultValue?: string[] | undefined;
   items: Option[];
   onChange?: (value: string) => void;
 }
 
-const CustomSelect = ({ placeholder, items, onChange }: CustomSelectProps) => {
+const CustomSelect = ({
+  placeholder,
+  items,
+  defaultValue = undefined,
+  onChange,
+}: CustomSelectProps) => {
   const collection = createListCollection({ items });
 
   return (
     <Select.Root
       collection={collection}
+      defaultValue={defaultValue}
       size="sm"
       width="100%"
       onValueChange={(e) => onChange?.(e.value[0] ?? "")}

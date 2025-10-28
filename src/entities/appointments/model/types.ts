@@ -2,12 +2,19 @@ export interface Appointment {
   id: number;
   doctor_id: number;
   patient_id: number;
+  patient_full_name: string;
   date: string;
+  status: appointmentStatus;
   cost: number;
   notes: string;
-  status: appointmentStatus;
-  //это типа username врача
-  doctor_name: string;
+}
+
+export interface AppointmentRequest {
+  doctor_id: string;
+  patient_id: string;
+  date: string;
+  notes: string;
+  cost: number;
 }
 
 export interface AppointmentsState {

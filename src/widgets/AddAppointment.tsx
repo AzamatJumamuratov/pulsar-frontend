@@ -10,17 +10,9 @@ import {
 import { useAppSelector } from "@/shared/model/hooks";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { useForm } from "react-hook-form";
-import { toaster } from "@/components/ui/toaster";
-import api from "@/app/api";
 import { FormattedNumberInput } from "@/shared/ui/FormattedNumberInput";
-
-interface AppointmentForm {
-  doctor_id: string;
-  patient_id: string;
-  date: string;
-  notes: string;
-  cost: number;
-}
+import type { AppointmentRequest } from "@/entities/appointments/model/types";
+import { appointmentsApi } from "@/entities/appointments/api/appointmentsApi";
 
 export default function AddAppointment() {
   const { data: patients, loading: PatientsLoading } = useAppSelector(
@@ -37,32 +29,16 @@ export default function AddAppointment() {
     watch,
     setValue,
     formState: { errors },
-  } = useForm<AppointmentForm>();
+  } = useForm<AppointmentRequest>();
 
   if (PatientsLoading || DoctorsListLoading) return;
 
-  const onSubmit = async (values: AppointmentForm) => {
+  const onSubmit = async (values: AppointmentRequest) => {
     try {
-      await api.post("/appointments/", {
-        doctor_id: Number(values.doctor_id),
-        patient_id: Number(values.patient_id),
-        date: values.date,
-        notes: values.notes,
-        cost: Number(values.cost),
-      });
-
-      toaster.create({
-        title: "Приём успешно создан",
-        type: "success",
-        duration: 2500,
-      });
+      await appointmentsApi.createAppointment(values);
       reset();
-    } catch {
-      toaster.create({
-        title: "Ошибка при создании приёма",
-        type: "error",
-        duration: 3000,
-      });
+    } catch (error) {
+      console.error("Ошибка при создании приёма:", error);
     }
   };
 

@@ -2,13 +2,14 @@ import { Box, Flex, VStack, Text, Button } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { MdRefresh } from "react-icons/md";
 import ProfileInfo from "@/widgets/ProfileInfo";
-import PatientsTable from "@/widgets/PatientsTable/PatientsTable";
-import AddAppointment from "@/widgets/PatientsTable/Reception/AddAppointment";
+import AddAppointment from "@/widgets/AddAppointment";
 import { useAppDispatch, useAppSelector } from "@/shared/model/hooks";
 import { fetchProfile } from "@/entities/profile/model/profileSlice";
 import { fetchPatients } from "@/entities/patient/model/patientsSlice";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { fetchDoctorsList } from "@/entities/doctorsList/model/doctorsSlice";
+
+import { PatientsTableContainer } from "@/widgets/PatientsTable";
 
 const ReceptionPage = () => {
   const dispatch = useAppDispatch();
@@ -69,7 +70,7 @@ const ReceptionPage = () => {
 
       {/* Правая колонка (контент) */}
       <Box flex="1" overflowY="auto" p={4}>
-        <PatientsTable />
+        <PatientsTableContainer />
         <AddAppointment />
       </Box>
     </Flex>
