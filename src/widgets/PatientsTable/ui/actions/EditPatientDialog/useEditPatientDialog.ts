@@ -5,7 +5,7 @@ import type { PatientCreateAndEditRequest } from "@/entities/patient/model/types
 import { EditPatient } from "@/entities/patient/api/patientsApi";
 // import { toaster } from "@/components/ui/toaster";
 import { useAppDispatch } from "@/shared/model/hooks";
-import { fetchPatients } from "@/entities/patient/model/patientsSlice";
+import { fetchDefaultPatients } from "@/entities/patient/model/patientsSlice";
 
 export function useEditPatientDialog(initialPatient: PatientData | null) {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +35,7 @@ export function useEditPatientDialog(initialPatient: PatientData | null) {
       //   description: "Данные успешно обновлены",
       //   type: "success",
       // });
-      dispatch(fetchPatients());
+      dispatch(fetchDefaultPatients());
       close();
     }
   };
