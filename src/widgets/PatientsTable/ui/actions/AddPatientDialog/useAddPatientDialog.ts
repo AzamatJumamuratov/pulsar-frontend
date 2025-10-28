@@ -95,7 +95,6 @@ export function useAddPatientDialog() {
     onSubmitPatient,
     onSubmitAppointment,
     currentStep,
-    setCurrentStep,
     createdPatient,
   };
 }

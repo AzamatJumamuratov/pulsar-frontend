@@ -63,7 +63,7 @@ export function CreateAppointmentForm({
     },
   });
 
-  const { handleSubmit, register, setValue, watch } = form;
+  const { handleSubmit, register, setValue } = form;
 
   const onSubmit = (data: AppointmentFormValues) => {
     const appointmentData: AppointmentRequest = {

@@ -10,6 +10,7 @@ import { type PatientFormValues } from "./useAddPatientDialog";
 import { CreateAppointmentForm } from "./CreateAppointmentForm";
 import { PatientDetailsForm } from "./PatientDetailsForm";
 import type { AppointmentRequest } from "@/entities/appointments/model/types";
+import type { PatientData } from "@/entities/patient/model/types";
 
 interface AddPatientDialogViewProps {
   isOpen: boolean;
@@ -18,7 +19,7 @@ interface AddPatientDialogViewProps {
   onSubmitPatient: (data: PatientFormValues) => void;
   onSubmitAppointment: (data: AppointmentRequest) => void;
   currentStep: number;
-  createdPatient: any | null;
+  createdPatient: PatientData | null;
 }
 
 export function AddPatientDialogView({
