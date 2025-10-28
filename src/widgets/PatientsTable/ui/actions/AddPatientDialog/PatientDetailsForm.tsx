@@ -71,9 +71,7 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
           <CustomSelect
             placeholder="Выберите пол"
             items={genderOptions}
-            defaultValue={
-              form.watch("gender") ? [String(form.watch("gender"))] : []
-            }
+            defaultValue={form.watch("gender")}
             onChange={(value: string) =>
               setValue("gender", value as GenderType, {
                 shouldValidate: true,
