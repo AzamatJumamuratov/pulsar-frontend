@@ -15,14 +15,6 @@ interface CreateAppointmentFormProps {
   onSubmitAppointment: (data: AppointmentRequest) => void;
 }
 
-export type AppointmentFormValues = {
-  patient_id: string;
-  doctor_id: string;
-  date: string;
-  notes: string;
-  cost: number;
-};
-
 const variants = {
   initial: { opacity: 0, x: 30 },
   animate: { opacity: 1, x: 0 },
@@ -55,7 +47,7 @@ export function CreateAppointmentForm({
     value: String(d.id),
   }));
 
-  const form = useForm<AppointmentFormValues>({
+  const form = useForm<AppointmentRequest>({
     defaultValues: {
       patient_id: String(createdPatient?.id || ""),
       doctor_id: "",
@@ -65,9 +57,11 @@ export function CreateAppointmentForm({
     },
   });
 
-  const { handleSubmit, register, setValue } = form;
+  const { handleSubmit, register, setValue, watch } = form;
+  // const selectedDoctorId = watch("doctor_id");
+  // const selectedPatientId = watch("patient_id");
 
-  const onSubmit = (data: AppointmentFormValues) => {
+  const onSubmit = (data: AppointmentRequest) => {
     const appointmentData: AppointmentRequest = {
       patient_id: data.patient_id,
       doctor_id: data.doctor_id,
@@ -91,14 +85,16 @@ export function CreateAppointmentForm({
           <VStack align="stretch" gap={4}>
             <CustomSelect
               placeholder="Выберите пациента"
-              defaultValue={[String(createdPatient?.id)]}
+              value={watch("patient_id")}
               items={patientOptions}
-              onChange={(values) => setValue("patient_id", values[0] || "")}
+              onChange={(v) => setValue("patient_id", v)}
             />
+
             <CustomSelect
-              placeholder="Выберите Врача"
+              placeholder="Выберите врача"
+              value={watch("doctor_id")}
               items={doctorOptions}
-              onChange={(values) => setValue("doctor_id", values[0] || "")}
+              onChange={(v) => setValue("doctor_id", v)}
             />
 
             <Input
