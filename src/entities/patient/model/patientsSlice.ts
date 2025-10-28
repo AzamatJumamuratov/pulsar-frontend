@@ -1,22 +1,28 @@
 // src/entities/patients/model/patientsSlice.ts
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "@/app/api";
-import type { PatientData, PatientsState } from "./types";
+import type { PatientsDataType, PatientsState } from "./types";
 
 const initialState: PatientsState = {
-  data: [],
+  data: {
+    patients: [],
+    total_count: 0,
+  },
   loading: false,
   error: null,
 };
 
+export const fetchDefaultPatients = () => fetchPatients({ page: 1, limit: 10 });
+
 export const fetchPatients = createAsyncThunk<
-  PatientData[],
-  void,
+  PatientsDataType,
+  { page: number; limit: number },
   { rejectValue: string }
->("patients/fetchPatients", async (_, { rejectWithValue }) => {
+>("patients/fetchPatients", async ({ page, limit }, { rejectWithValue }) => {
   try {
-    const response = await api.get<PatientData[]>("/patients/", {
-      params: { skip: 0, limit: 10 },
+    const skip = (page - 1) * limit;
+    const response = await api.get<PatientsDataType>("/patients/", {
+      params: { skip, limit },
     });
     return response.data;
   } catch (error: any) {
@@ -33,7 +39,8 @@ const patientsSlice = createSlice({
   initialState,
   reducers: {
     clearPatients(state) {
-      state.data = [];
+      state.data.patients = [];
+      state.data.total_count = 0;
       state.error = null;
     },
   },

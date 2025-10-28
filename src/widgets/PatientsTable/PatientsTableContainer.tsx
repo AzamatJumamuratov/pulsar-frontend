@@ -8,24 +8,20 @@ import PatientTableView from "./ui/PatientsTableView";
 export default function PatientsTableContainer() {
   const dispatch = useAppDispatch();
   const {
-    data: patients = [],
+    data: { patients = [], total_count },
     loading,
     error,
   } = useAppSelector((s) => s.patients);
   const profile = useAppSelector((s) => s.profile.data);
 
-  const {
-    currentPage,
-    totalPages,
-    totalCount,
-    paginatedPatients,
-    nextPage,
-    prevPage,
-  } = usePatientsPagination(patients, 10);
+  const { currentPage, totalPages, nextPage, prevPage } = usePatientsPagination(
+    total_count,
+    10
+  );
 
   useEffect(() => {
-    dispatch(fetchPatients());
-  }, [dispatch]);
+    dispatch(fetchPatients({ page: currentPage, limit: 10 }));
+  }, [dispatch, currentPage]);
 
   if (loading || !profile) return <PatientsTableSkeleton />;
 
@@ -34,8 +30,8 @@ export default function PatientsTableContainer() {
       profile={profile}
       loading={loading}
       error={error}
-      patients={paginatedPatients}
-      totalCount={totalCount}
+      patients={patients}
+      totalCount={total_count}
       pageSize={10}
       currentPage={currentPage}
       totalPages={totalPages}

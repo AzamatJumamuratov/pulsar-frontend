@@ -1,21 +1,13 @@
-import { Box, Flex, HStack, IconButton } from "@chakra-ui/react";
+import { Box, Flex, HStack } from "@chakra-ui/react";
 import { ColorModeButton, useColorModeValue } from "@/components/ui/color-mode";
 import Logo from "@/shared/Logo/Logo";
 import { Wrapper } from "@/shared/Wrapper";
-import { useNavigate } from "react-router";
-
-import { IoExitOutline } from "react-icons/io5";
-import { clearTokens } from "@/app/api";
+import ExitButtonDialog from "@/shared/ui/ExitButtonDialog";
 
 export default function Header() {
   const bg = useColorModeValue("white", "gray.800");
   const textColor = useColorModeValue("teal.600", "teal.200");
-  const navigate = useNavigate();
 
-  function exitProfile() {
-    clearTokens();
-    navigate("/login");
-  }
   return (
     <Box
       as="header"
@@ -31,9 +23,7 @@ export default function Header() {
           <Logo />
           <HStack gap={6}>
             <ColorModeButton />
-            <IconButton onClick={exitProfile} variant={"ghost"}>
-              <IoExitOutline />
-            </IconButton>
+            <ExitButtonDialog />
           </HStack>
         </Flex>
       </Wrapper>

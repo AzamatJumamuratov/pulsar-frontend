@@ -2,7 +2,7 @@ import { Box, Flex, VStack, Text, Button } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { MdRefresh } from "react-icons/md";
 import ProfileInfo from "@/widgets/ProfileInfo";
-// import AddAppointment from "@/widgets/AddAppointment";
+import AddAppointment from "@/widgets/AddAppointment";
 import { useAppDispatch, useAppSelector } from "@/shared/model/hooks";
 import { fetchProfile } from "@/entities/profile/model/profileSlice";
 import { fetchPatients } from "@/entities/patient/model/patientsSlice";
@@ -21,7 +21,7 @@ const ReceptionPage = () => {
 
   useEffect(() => {
     dispatch(fetchProfile());
-    dispatch(fetchPatients());
+    dispatch(fetchPatients({ page: 1, limit: 10 }));
     dispatch(fetchDoctorsList());
   }, [dispatch]);
 
@@ -71,7 +71,7 @@ const ReceptionPage = () => {
       {/* Правая колонка (контент) */}
       <Box flex="1" overflowY="auto" p={4}>
         <PatientsTableContainer />
-        {/* <AddAppointment /> */}
+        <AddAppointment />
       </Box>
     </Flex>
   );

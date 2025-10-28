@@ -10,10 +10,24 @@ export interface PatientData {
   created_at: string;
 }
 
+export interface PatientsDataType {
+  patients: PatientData[];
+  total_count: number;
+}
+
 export interface PatientsState {
-  data: PatientData[];
+  data: PatientsDataType;
   loading: boolean;
   error: string | null;
+}
+
+export interface PatientCreateAndEditRequest {
+  full_name: string;
+  birth_date: string;
+  gender: GenderType;
+  phone: string;
+  passport: string;
+  address: string;
 }
 
 export type GenderType = "male" | "female";

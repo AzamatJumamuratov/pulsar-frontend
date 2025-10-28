@@ -4,11 +4,14 @@ import { motion } from "framer-motion";
 import { type UseFormReturn, type FieldError } from "react-hook-form";
 import ValidatedInput from "@/features/auth/ui/ValidatedInput";
 import CustomSelect from "@/shared/ui/CustomSelect";
-import { type PatientFormValues } from "./useAddPatientDialog";
+import {
+  type GenderType,
+  type PatientCreateAndEditRequest,
+} from "@/entities/patient/model/types";
 
 // Типы пропсов для этого компонента
 interface PatientDetailsFormProps {
-  form: UseFormReturn<PatientFormValues>;
+  form: UseFormReturn<PatientCreateAndEditRequest>;
   isSubmitting: boolean;
 }
 
@@ -31,9 +34,8 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
     formState: { errors },
   } = form;
 
-  // Хелпер для получения ошибок
   const getFieldError = (
-    field: keyof PatientFormValues
+    field: keyof PatientCreateAndEditRequest
   ): FieldError | undefined =>
     (errors as Record<string, FieldError | undefined>)[field];
 
@@ -69,8 +71,11 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
           <CustomSelect
             placeholder="Выберите пол"
             items={genderOptions}
+            defaultValue={
+              form.watch("gender") ? [String(form.watch("gender"))] : []
+            }
             onChange={(value: string) =>
-              setValue("gender", value, {
+              setValue("gender", value as GenderType, {
                 shouldValidate: true,
               })
             }

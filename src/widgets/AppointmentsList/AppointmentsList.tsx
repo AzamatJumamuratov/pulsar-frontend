@@ -22,11 +22,13 @@ export default function AppointmentsList() {
   }, [dispatch]);
 
   const handleConfirm = async (id: number) => {
-    appointmentsApi.confirmAppointment(id);
+    await appointmentsApi.confirmAppointment(id);
+    dispatch(fetchAppointmentsList());
   };
 
   const handleUpdateCost = async (id: number, cost: number) => {
-    appointmentsApi.updateCost(id, cost);
+    await appointmentsApi.updateCost(id, cost);
+    dispatch(fetchAppointmentsList());
   };
 
   if (loading)

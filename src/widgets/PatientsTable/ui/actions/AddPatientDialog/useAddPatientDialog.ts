@@ -1,22 +1,16 @@
 // src/widgets/AddPatientDialog/useAddPatientDialog.ts
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import api from "@/app/api";
 import { toaster } from "@/components/ui/toaster";
 import { useAppDispatch } from "@/shared/model/hooks";
-import { fetchPatients } from "@/entities/patient/model/patientsSlice";
-import type { PatientData } from "@/entities/patient/model/types";
+import { fetchDefaultPatients } from "@/entities/patient/model/patientsSlice";
+import type {
+  PatientCreateAndEditRequest,
+  PatientData,
+} from "@/entities/patient/model/types";
 import type { AppointmentRequest } from "@/entities/appointments/model/types";
 import { appointmentsApi } from "@/entities/appointments/api/appointmentsApi";
-
-export type PatientFormValues = {
-  full_name: string;
-  birth_date: string;
-  gender: string;
-  phone: string;
-  passport: string;
-  address: string;
-};
+import { CreatePatient } from "@/entities/patient/api/patientsApi";
 
 export function useAddPatientDialog() {
   const dispatch = useAppDispatch();
@@ -26,11 +20,11 @@ export function useAddPatientDialog() {
     null
   );
 
-  const form = useForm<PatientFormValues>({
+  const form = useForm<PatientCreateAndEditRequest>({
     defaultValues: {
       full_name: "",
       birth_date: "",
-      gender: "",
+      gender: "male",
       phone: "",
       passport: "",
       address: "",
@@ -55,15 +49,10 @@ export function useAddPatientDialog() {
     form.reset();
   };
 
-  const onSubmitPatient = async (data: PatientFormValues) => {
+  const onSubmitPatient = async (data: PatientCreateAndEditRequest) => {
     try {
-      const response = await api.post<PatientData>("/patients/", data);
-      toaster.create({
-        description: `Пациент ${response.data.full_name} успешно создан.`,
-        type: "success",
-      });
-
-      setCreatedPatient(response.data);
+      const response = await CreatePatient(data);
+      setCreatedPatient(response);
       setCurrentStep(2);
     } catch (err: any) {
       toaster.create({
@@ -78,7 +67,7 @@ export function useAddPatientDialog() {
     try {
       await appointmentsApi.createAppointment(data);
       close();
-      dispatch(fetchPatients());
+      dispatch(fetchDefaultPatients());
     } catch (error) {
       toaster.create({
         description: "Ошибка При создании Приема!",

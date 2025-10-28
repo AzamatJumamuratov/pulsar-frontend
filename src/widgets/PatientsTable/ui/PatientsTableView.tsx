@@ -1,24 +1,14 @@
 "use client";
 
-import {
-  Table,
-  Text,
-  Box,
-  IconButton,
-  Skeleton,
-  SkeletonText,
-  Flex,
-  Button,
-} from "@chakra-ui/react";
-
+import { Table, Text, Box, Flex, Button } from "@chakra-ui/react";
 import { useColorModeValue } from "@/components/ui/color-mode";
-import { FaRegEdit } from "react-icons/fa";
-import { MdDeleteOutline } from "react-icons/md";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import AddPatientDialog from "./actions/AddPatientDialog/AddPatientDialogContainer";
 import ShowMoreDialog from "./actions/ShowMoreDialog";
 import type { PatientData } from "@/entities/patient/model/types";
 import type { Profile } from "@/entities/profile/model/types";
+import EditPatientDialogContainer from "./actions/EditPatientDialog/EditPatientDialogContainer";
+import DeletePatientDialog from "./actions/DeletePatientDialog/DeletePatientDialog";
 
 interface PatientTableViewProps {
   profile: Profile | null;
@@ -35,8 +25,6 @@ interface PatientTableViewProps {
 }
 
 export default function PatientTableView({
-  profile,
-  loading,
   error,
   patients,
   totalCount,
@@ -46,42 +34,6 @@ export default function PatientTableView({
   onNextPage,
 }: PatientTableViewProps) {
   const borderClr = useColorModeValue("gray.200", "gray.700");
-
-  if (loading || !profile) {
-    // упрощённый skeleton (тот что был раньше)
-    return (
-      <Box>
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          alignItems="center"
-          mb={4}
-        >
-          <SkeletonText noOfLines={1} height="20px" width="150px" />
-          <Skeleton height="36px" width="160px" />
-        </Box>
-
-        <Box borderWidth="1px" borderRadius="lg" overflow="hidden">
-          {[...Array(5)].map((_, i) => (
-            <Flex
-              key={i}
-              justify="space-between"
-              align="center"
-              borderBottomWidth="1px"
-              p={3}
-              _last={{ borderBottom: "none" }}
-            >
-              <Skeleton height="20px" width="30px" />
-              <Skeleton height="20px" width="180px" />
-              <Skeleton height="20px" width="140px" />
-              <Skeleton height="20px" width="100px" />
-              <Skeleton height="28px" width="80px" borderRadius="md" />
-            </Flex>
-          ))}
-        </Box>
-      </Box>
-    );
-  }
 
   // Ошибка может рендериться выше в контейнере, но добавлю обработку и тут
   if (error) {
@@ -109,7 +61,6 @@ export default function PatientTableView({
       <Table.Root size="md" variant="outline" borderColor={borderClr}>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeader>ID</Table.ColumnHeader>
             <Table.ColumnHeader>Фамилия и Имя</Table.ColumnHeader>
             <Table.ColumnHeader>Телефон</Table.ColumnHeader>
             <Table.ColumnHeader>Паспорт</Table.ColumnHeader>
@@ -120,7 +71,6 @@ export default function PatientTableView({
         <Table.Body>
           {patients.map((p) => (
             <Table.Row key={p.id}>
-              <Table.Cell>{p.id}</Table.Cell>
               <Table.Cell>{p.full_name}</Table.Cell>
               <Table.Cell>{p.phone}</Table.Cell>
               <Table.Cell>{p.passport}</Table.Cell>
@@ -131,22 +81,8 @@ export default function PatientTableView({
                 alignItems="center"
               >
                 <ShowMoreDialog patientData={p} />
-                <IconButton
-                  aria-label="Редактировать"
-                  backgroundColor="teal"
-                  color="white"
-                  size="sm"
-                >
-                  <FaRegEdit />
-                </IconButton>
-                <IconButton
-                  aria-label="Удалить"
-                  backgroundColor="teal"
-                  color="white"
-                  size="sm"
-                >
-                  <MdDeleteOutline />
-                </IconButton>
+                <EditPatientDialogContainer patient={p} />
+                <DeletePatientDialog patient={p} />
               </Table.Cell>
             </Table.Row>
           ))}

@@ -6,17 +6,19 @@ import { AnimatePresence } from "framer-motion";
 import { GoPlus } from "react-icons/go";
 import { RxCross1 } from "react-icons/rx";
 import { type UseFormReturn } from "react-hook-form";
-import { type PatientFormValues } from "./useAddPatientDialog";
 import { CreateAppointmentForm } from "./CreateAppointmentForm";
 import { PatientDetailsForm } from "./PatientDetailsForm";
 import type { AppointmentRequest } from "@/entities/appointments/model/types";
-import type { PatientData } from "@/entities/patient/model/types";
+import type {
+  PatientCreateAndEditRequest,
+  PatientData,
+} from "@/entities/patient/model/types";
 
 interface AddPatientDialogViewProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  form: UseFormReturn<PatientFormValues>;
-  onSubmitPatient: (data: PatientFormValues) => void;
+  form: UseFormReturn<PatientCreateAndEditRequest>;
+  onSubmitPatient: (data: PatientCreateAndEditRequest) => void;
   onSubmitAppointment: (data: AppointmentRequest) => void;
   currentStep: number;
   createdPatient: PatientData | null;

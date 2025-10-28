@@ -36,7 +36,9 @@ export function CreateAppointmentForm({
   createdPatient,
   onSubmitAppointment,
 }: CreateAppointmentFormProps) {
-  const { data: patients } = useAppSelector((state) => state.patients);
+  const {
+    data: { patients },
+  } = useAppSelector((state) => state.patients);
   const { data: doctors } = useAppSelector((state) => state.doctorsList);
   const allPatients: PatientData[] = createdPatient
     ? [createdPatient, ...patients.filter((p) => p.id !== createdPatient.id)]

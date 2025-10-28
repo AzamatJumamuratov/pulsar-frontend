@@ -15,9 +15,10 @@ import type { AppointmentRequest } from "@/entities/appointments/model/types";
 import { appointmentsApi } from "@/entities/appointments/api/appointmentsApi";
 
 export default function AddAppointment() {
-  const { data: patients, loading: PatientsLoading } = useAppSelector(
-    (s) => s.patients
-  );
+  const {
+    data: { patients },
+    loading: PatientsLoading,
+  } = useAppSelector((s) => s.patients);
   const { data: doctorsList, loading: DoctorsListLoading } = useAppSelector(
     (s) => s.doctorsList
   );
