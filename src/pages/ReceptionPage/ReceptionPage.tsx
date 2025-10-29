@@ -4,6 +4,7 @@ import { MdRefresh } from "react-icons/md";
 import ProfileInfo from "@/widgets/ProfileInfo";
 // import AddAppointment from "@/widgets/AddAppointment";
 import ReceptionDoneAppointments from "@/widgets/ReceptionDoneAppointments";
+import SidebarDrawer from "@/widgets/SidebarDrawer";
 import { useAppDispatch, useAppSelector } from "@/shared/model/hooks";
 import { fetchProfile } from "@/entities/profile/model/profileSlice";
 import { fetchPatients } from "@/entities/patient/model/patientsSlice";
@@ -56,7 +57,7 @@ const ReceptionPage = () => {
       overflow="hidden"
       bg={useColorModeValue("gray.50", "gray.900")}
     >
-      {/* Левая колонка (сайдбар) */}
+      {/* Левая колонка (сайдбар) - скрыта на мобильных */}
       <Box
         w="250px"
         height="full"
@@ -65,12 +66,16 @@ const ReceptionPage = () => {
         borderColor={useColorModeValue("gray.200", "gray.700")}
         p={4}
         overflowY="auto"
+        display={{ base: "none", md: "block" }}
       >
         <ProfileInfo />
       </Box>
 
+      {/* Drawer для мобильных устройств */}
+      <SidebarDrawer />
+
       {/* Правая колонка (контент) */}
-      <Box flex="1" overflowY="auto" p={4}>
+      <Box flex="1" overflowY="auto" p={4} pl={{ base: 12, md: 4 }}>
         <PatientsTableContainer />
         <ReceptionDoneAppointments />
       </Box>

@@ -1,6 +1,13 @@
 "use client";
 
-import { Table, Text, Box, Flex, Button } from "@chakra-ui/react";
+import {
+  Table,
+  Text,
+  Box,
+  Flex,
+  Button,
+  useBreakpointValue,
+} from "@chakra-ui/react";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import AddPatientDialog from "./actions/AddPatientDialog/AddPatientDialogContainer";
@@ -37,6 +44,8 @@ export default function PatientTableView({
   isSearching = false,
 }: PatientTableViewProps) {
   const borderClr = useColorModeValue("gray.200", "gray.700");
+  const showPhone = useBreakpointValue({ base: false, md: true });
+  const showPassport = useBreakpointValue({ base: false, lg: true });
 
   // Ошибка может рендериться выше в контейнере, но добавлю обработку и тут
   if (error) {
@@ -65,8 +74,8 @@ export default function PatientTableView({
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader>Фамилия и Имя</Table.ColumnHeader>
-            <Table.ColumnHeader>Телефон</Table.ColumnHeader>
-            <Table.ColumnHeader>Паспорт</Table.ColumnHeader>
+            {showPhone && <Table.ColumnHeader>Телефон</Table.ColumnHeader>}
+            {showPassport && <Table.ColumnHeader>Паспорт</Table.ColumnHeader>}
             <Table.ColumnHeader>Действия</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
@@ -75,8 +84,8 @@ export default function PatientTableView({
           {patients.map((p) => (
             <Table.Row key={p.id}>
               <Table.Cell>{p.full_name}</Table.Cell>
-              <Table.Cell>{p.phone}</Table.Cell>
-              <Table.Cell>{p.passport}</Table.Cell>
+              {showPhone && <Table.Cell>{p.phone}</Table.Cell>}
+              {showPassport && <Table.Cell>{p.passport}</Table.Cell>}
               <Table.Cell
                 display="flex"
                 gap={3}
@@ -98,7 +107,9 @@ export default function PatientTableView({
         {!isSearching && (
           <Table.Footer>
             <Table.Row>
-              <Table.Cell colSpan={5}>
+              <Table.Cell
+                colSpan={(showPhone ? 1 : 0) + (showPassport ? 1 : 0) + 3}
+              >
                 <Flex justify="space-between" align="center" mt={3}>
                   <Text>Всего: {totalCount}</Text>
 
@@ -137,7 +148,9 @@ export default function PatientTableView({
         {isSearching && (
           <Table.Footer>
             <Table.Row>
-              <Table.Cell colSpan={5}>
+              <Table.Cell
+                colSpan={(showPhone ? 1 : 0) + (showPassport ? 1 : 0) + 3}
+              >
                 <Flex justify="center" align="center" mt={3}>
                   <Text>Найдено: {patients.length}</Text>
                 </Flex>

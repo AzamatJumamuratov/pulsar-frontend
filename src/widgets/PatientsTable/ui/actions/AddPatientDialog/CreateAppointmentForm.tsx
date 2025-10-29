@@ -25,6 +25,29 @@ const variants = {
   transition: { duration: 0.24 },
 };
 
+// Функция для подготовки опций пациентов
+const preparePatientOptions = (
+  patients: PatientData[],
+  createdPatient: PatientData | null
+) => {
+  const allPatients = createdPatient
+    ? [createdPatient, ...patients.filter((p) => p.id !== createdPatient.id)]
+    : patients;
+
+  return allPatients.map((p) => ({
+    label:
+      createdPatient?.id === p.id ? `${p.full_name} ⭐ Новый` : p.full_name,
+    value: String(p.id),
+  }));
+};
+
+// Функция для подготовки опций врачей
+const prepareDoctorOptions = (doctors: { id: number; full_name: string }[]) =>
+  doctors.map((d) => ({
+    label: d.full_name,
+    value: String(d.id),
+  }));
+
 export function CreateAppointmentForm({
   onClose,
   createdPatient,
@@ -35,20 +58,9 @@ export function CreateAppointmentForm({
   } = useAppSelector((state) => state.patients);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: doctors } = useAppSelector((state) => state.doctorsList);
-  const allPatients: PatientData[] = createdPatient
-    ? [createdPatient, ...patients.filter((p) => p.id !== createdPatient.id)]
-    : patients;
 
-  const patientOptions = allPatients.map((p) => ({
-    label:
-      createdPatient?.id === p.id ? `${p.full_name} ⭐ Новый` : p.full_name,
-    value: String(p.id),
-  }));
-
-  const doctorOptions = doctors.map((d) => ({
-    label: d.full_name,
-    value: String(d.id),
-  }));
+  const patientOptions = preparePatientOptions(patients, createdPatient);
+  const doctorOptions = prepareDoctorOptions(doctors);
 
   const form = useForm<AppointmentRequest>({
     defaultValues: {

@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "@/shared/model/hooks";
 import { fetchProfile } from "@/entities/profile/model/profileSlice";
 import AppointmentsList from "@/widgets/AppointmentsList/AppointmentsList";
 import { fetchAppointmentsList } from "@/entities/appointments/model/appointmentsSlice";
+import SidebarDrawer from "@/widgets/SidebarDrawer";
 
 const DoctorPage = () => {
   const dispatch = useAppDispatch();
@@ -55,7 +56,7 @@ const DoctorPage = () => {
   return (
     <Box as="main" h="100%" overflow="hidden">
       <Flex h="full">
-        {/* Липкая левая панель */}
+        {/* Липкая левая панель - скрыта на мобильных */}
         <Box
           w="260px"
           h="full"
@@ -67,12 +68,16 @@ const DoctorPage = () => {
           bg={useColorModeValue("gray.50", "gray.900")}
           p={4}
           overflowY="auto"
+          display={{ base: "none", md: "block" }}
         >
           <ProfileInfo />
         </Box>
 
+        {/* Drawer для мобильных устройств */}
+        <SidebarDrawer />
+
         {/* Прокручиваемая правая часть */}
-        <Box flex={1} h="full" overflowY="auto" p={4}>
+        <Box flex={1} h="full" overflowY="auto" p={4} pl={{ base: 12, md: 4 }}>
           <AppointmentsList />
         </Box>
       </Flex>

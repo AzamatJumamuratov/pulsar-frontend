@@ -1,15 +1,16 @@
 // src/widgets/AddPatientDialog/PatientDetailsForm.tsx
 import { VStack, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { type UseFormReturn, type FieldError } from "react-hook-form";
+import { type UseFormReturn } from "react-hook-form";
 import ValidatedInput from "@/features/auth/ui/ValidatedInput";
 import CustomSelect from "@/shared/ui/CustomSelect";
+import ValidatedPhoneInput from "@/shared/ui/ValidatedPhoneInput";
+import { ValidatedDateTimeInput } from "@/shared/ui/DateTimeInput";
 import {
   type GenderType,
   type PatientCreateAndEditRequest,
 } from "@/entities/patient/model/types";
 
-// Типы пропсов для этого компонента
 interface PatientDetailsFormProps {
   form: UseFormReturn<PatientCreateAndEditRequest>;
   isSubmitting: boolean;
@@ -27,6 +28,10 @@ const variants = {
   transition: { duration: 0.24 },
 };
 
+// Утилита для получения ошибки поля
+const getFieldError = (errors: any, field: keyof PatientCreateAndEditRequest) =>
+  errors[field];
+
 export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
   const {
     register,
@@ -34,11 +39,6 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
     watch,
     formState: { errors },
   } = form;
-
-  const getFieldError = (
-    field: keyof PatientCreateAndEditRequest
-  ): FieldError | undefined =>
-    (errors as Record<string, FieldError | undefined>)[field];
 
   return (
     <motion.div
@@ -55,16 +55,13 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
           register={register("full_name", {
             required: "Обязательное поле",
           })}
-          error={getFieldError("full_name")}
+          error={getFieldError(errors, "full_name")}
         />
 
-        <ValidatedInput
-          label="Дата рождения"
+        <ValidatedDateTimeInput
+          name="birth_date"
           type="date"
-          register={register("birth_date", {
-            required: "Обязательное поле",
-          })}
-          error={getFieldError("birth_date")}
+          required="Обязательное поле"
         />
 
         <VStack align="stretch">
@@ -79,21 +76,16 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
               })
             }
           />
-          {getFieldError("gender") && (
+          {getFieldError(errors, "gender") && (
             <Text color="red.500" fontSize="sm">
-              {getFieldError("gender")?.message}
+              {getFieldError(errors, "gender")?.message}
             </Text>
           )}
         </VStack>
-
-        <ValidatedInput
-          label="Телефон"
-          placeholder="+998901234567"
-          register={register("phone", {
-            required: "Обязательное поле",
-          })}
-          error={getFieldError("phone")}
-        />
+        <VStack align="stretch">
+          <Text fontWeight="medium">Номер Телефона</Text>
+          <ValidatedPhoneInput name="phone" required="Обязательное поле" />
+        </VStack>
 
         <ValidatedInput
           label="Паспорт"
@@ -101,7 +93,7 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
           register={register("passport", {
             required: "Обязательное поле",
           })}
-          error={getFieldError("passport")}
+          error={getFieldError(errors, "passport")}
         />
 
         <ValidatedInput
@@ -110,7 +102,7 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
           register={register("address", {
             required: "Обязательное поле",
           })}
-          error={getFieldError("address")}
+          error={getFieldError(errors, "address")}
         />
       </VStack>
     </motion.div>

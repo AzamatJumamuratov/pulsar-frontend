@@ -1,14 +1,18 @@
 import { Box, Input } from "@chakra-ui/react";
 import { useFormContext, type FieldError } from "react-hook-form";
 
-interface DateTimeInputProps {
+interface ValidatedDateTimeInputProps {
   name: string;
   required?: string;
+  type?: "datetime-local" | "date";
+  defaultYear?: number;
 }
 
-export const DateTimeInput: React.FC<DateTimeInputProps> = ({
+export const ValidatedDateTimeInput: React.FC<ValidatedDateTimeInputProps> = ({
   name,
   required = false,
+  type = "datetime-local",
+  defaultYear = 2025,
 }) => {
   const {
     register,
@@ -17,19 +21,43 @@ export const DateTimeInput: React.FC<DateTimeInputProps> = ({
 
   const fieldError = errors[name] as FieldError | undefined;
 
+  const getRequiredMessage = () => {
+    if (type === "date") {
+      return required ? "Укажите дату рождения" : false;
+    }
+    return required ? "Укажите дату приёма" : false;
+  };
+
+  const getYearValidation = (value: string) => {
+    if (!value) return true;
+    const date = new Date(value);
+    const year = date.getFullYear();
+
+    // Для даты рождения проверяем, что год 4-значный и не в будущем
+    if (type === "date") {
+      const currentYear = new Date().getFullYear();
+      if (year > currentYear) {
+        return "Дата рождения не может быть в будущем";
+      }
+      if (year < 1900) {
+        return "Год должен быть не менее 1900";
+      }
+    }
+
+    // Проверяем, что год в диапазоне 1000-9999
+    // Проверяем, что год ровно 4 цифры
+    const yearStr = year.toString();
+    return yearStr.length === 4 || "Год должен содержать ровно 4 цифры";
+  };
+
   return (
     <>
       <Input
-        type="datetime-local"
+        type={type}
+        defaultValue={type === "date" ? `${defaultYear}-01-01` : undefined}
         {...register(name, {
-          required: required ? "Укажите дату приёма" : false,
-          validate: (value) => {
-            if (!value) return true;
-            const year = new Date(value).getFullYear();
-            return (
-              (year >= 1000 && year <= 9999) || "Год должен быть 4-х значным"
-            );
-          },
+          required: getRequiredMessage(),
+          validate: getYearValidation,
         })}
       />
 
@@ -41,3 +69,6 @@ export const DateTimeInput: React.FC<DateTimeInputProps> = ({
     </>
   );
 };
+
+// Обратная совместимость
+export const DateTimeInput = ValidatedDateTimeInput;
