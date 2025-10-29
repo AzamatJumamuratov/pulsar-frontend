@@ -31,6 +31,7 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
   const {
     register,
     setValue,
+    watch,
     formState: { errors },
   } = form;
 
@@ -71,7 +72,7 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
           <CustomSelect
             placeholder="Выберите пол"
             items={genderOptions}
-            defaultValue={form.watch("gender")}
+            value={watch("gender")}
             onChange={(value: string) =>
               setValue("gender", value as GenderType, {
                 shouldValidate: true,

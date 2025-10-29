@@ -52,6 +52,10 @@ export function useAddPatientDialog() {
   const onSubmitPatient = async (data: PatientCreateAndEditRequest) => {
     try {
       const response = await CreatePatient(data);
+      toaster.create({
+        description: `Пациент ${response?.full_name} успешно создан.`,
+        type: "success",
+      });
       setCreatedPatient(response);
       setCurrentStep(2);
     } catch (err: any) {
@@ -66,6 +70,11 @@ export function useAddPatientDialog() {
   const onSubmitAppointment = async (data: AppointmentRequest) => {
     try {
       await appointmentsApi.createAppointment(data);
+      toaster.create({
+        title: "Приём успешно создан",
+        type: "success",
+        duration: 2500,
+      });
       close();
       dispatch(fetchDefaultPatients());
     } catch (error) {

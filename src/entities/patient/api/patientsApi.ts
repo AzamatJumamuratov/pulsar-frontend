@@ -7,18 +7,10 @@ export async function CreatePatient(
 ): Promise<PatientData | null> {
   try {
     const response = await api.post<PatientData>("/patients/", data);
-    toaster.create({
-      description: `Пациент ${response.data.full_name} успешно создан.`,
-      type: "success",
-    });
-    return response.data;
+
+    return Promise.resolve(response.data);
   } catch (err: any) {
-    toaster.create({
-      description:
-        err?.response?.data?.detail || "Ошибка при создании пациента.",
-      type: "error",
-    });
-    return null;
+    return Promise.reject(null);
   }
 }
 

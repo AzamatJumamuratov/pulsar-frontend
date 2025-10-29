@@ -90,7 +90,6 @@ export function AddPatientDialogView({
                 </form>
               ) : (
                 <CreateAppointmentForm
-                  isSubmitting={isSubmitting}
                   onClose={() => onOpenChange(false)}
                   createdPatient={createdPatient}
                   onSubmitAppointment={onSubmitAppointment}

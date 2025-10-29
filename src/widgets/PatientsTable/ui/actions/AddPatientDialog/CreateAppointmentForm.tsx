@@ -7,9 +7,10 @@ import { useAppSelector } from "@/shared/model/hooks";
 import CustomSelect from "@/shared/ui/CustomSelect";
 import type { PatientData } from "@/entities/patient/model/types";
 import type { AppointmentRequest } from "@/entities/appointments/model/types";
+import { useState } from "react";
+import { FormattedNumberInput } from "@/shared/ui/FormattedNumberInput";
 
 interface CreateAppointmentFormProps {
-  isSubmitting: boolean;
   onClose: () => void;
   createdPatient: PatientData | null;
   onSubmitAppointment: (data: AppointmentRequest) => void;
@@ -23,7 +24,6 @@ const variants = {
 };
 
 export function CreateAppointmentForm({
-  isSubmitting,
   onClose,
   createdPatient,
   onSubmitAppointment,
@@ -31,6 +31,7 @@ export function CreateAppointmentForm({
   const {
     data: { patients },
   } = useAppSelector((state) => state.patients);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { data: doctors } = useAppSelector((state) => state.doctorsList);
   const allPatients: PatientData[] = createdPatient
     ? [createdPatient, ...patients.filter((p) => p.id !== createdPatient.id)]
@@ -58,10 +59,8 @@ export function CreateAppointmentForm({
   });
 
   const { handleSubmit, register, setValue, watch } = form;
-  // const selectedDoctorId = watch("doctor_id");
-  // const selectedPatientId = watch("patient_id");
 
-  const onSubmit = (data: AppointmentRequest) => {
+  const onSubmit = async (data: AppointmentRequest) => {
     const appointmentData: AppointmentRequest = {
       patient_id: data.patient_id,
       doctor_id: data.doctor_id,
@@ -69,7 +68,9 @@ export function CreateAppointmentForm({
       notes: data.notes,
       cost: data.cost,
     };
-    onSubmitAppointment(appointmentData);
+    setIsSubmitting(true);
+    await onSubmitAppointment(appointmentData);
+    setIsSubmitting(false);
   };
 
   return (
@@ -102,16 +103,28 @@ export function CreateAppointmentForm({
               {...register("date", { required: true })}
             />
             <Input placeholder="Заметки" {...register("notes")} />
-            <Input
+            <FormattedNumberInput
+              placeholder="Стоимость (сум)"
+              value={watch("cost")}
+              onChange={(val) =>
+                setValue("cost", Number(val), { shouldValidate: true })
+              }
+            />
+            {/* <Input
               placeholder="Стоимость"
               type="number"
               {...register("cost", { valueAsNumber: true })}
-            />
+            /> */}
           </VStack>
         </Dialog.Body>
         <Dialog.Footer>
           <Box display="flex" justifyContent="space-between" w="100%">
-            <Button variant="ghost" type="button" onClick={onClose}>
+            <Button
+              variant="ghost"
+              type="button"
+              disabled={isSubmitting}
+              onClick={onClose}
+            >
               Закрыть
             </Button>
             <Button colorPalette="teal" type="submit" disabled={isSubmitting}>

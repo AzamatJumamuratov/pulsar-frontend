@@ -31,19 +31,7 @@ export const appointmentsApi = {
         notes,
         cost,
       });
-
-      toaster.create({
-        title: "Приём успешно создан",
-        type: "success",
-        duration: 2500,
-      });
-    } catch {
-      toaster.create({
-        title: "Ошибка при создании приёма",
-        type: "error",
-        duration: 3000,
-      });
-    }
+    } catch {}
   },
 
   async updateCost(
