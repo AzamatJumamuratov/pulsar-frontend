@@ -9,6 +9,7 @@ import type { PatientData } from "@/entities/patient/model/types";
 import type { Profile } from "@/entities/profile/model/types";
 import EditPatientDialogContainer from "./actions/EditPatientDialog/EditPatientDialogContainer";
 import DeletePatientDialog from "./actions/DeletePatientDialog/DeletePatientDialog";
+import CreateAppointmentForPatient from "./actions/CreateAppointmentForPatient";
 
 interface PatientTableViewProps {
   profile: Profile | null;
@@ -22,6 +23,7 @@ interface PatientTableViewProps {
   onPrevPage: () => void;
   onNextPage: () => void;
   onGotoPage: (page: number) => void;
+  isSearching?: boolean;
 }
 
 export default function PatientTableView({
@@ -32,6 +34,7 @@ export default function PatientTableView({
   totalPages,
   onPrevPage,
   onNextPage,
+  isSearching = false,
 }: PatientTableViewProps) {
   const borderClr = useColorModeValue("gray.200", "gray.700");
 
@@ -80,6 +83,10 @@ export default function PatientTableView({
                 justifyContent="center"
                 alignItems="center"
               >
+                <CreateAppointmentForPatient
+                  patientId={p.id}
+                  patientName={p.full_name}
+                />
                 <ShowMoreDialog patientData={p} />
                 <EditPatientDialogContainer patient={p} />
                 <DeletePatientDialog patient={p} />
@@ -88,43 +95,56 @@ export default function PatientTableView({
           ))}
         </Table.Body>
 
-        <Table.Footer>
-          <Table.Row>
-            <Table.Cell colSpan={5}>
-              <Flex justify="space-between" align="center" mt={3}>
-                <Text>Всего: {totalCount}</Text>
+        {!isSearching && (
+          <Table.Footer>
+            <Table.Row>
+              <Table.Cell colSpan={5}>
+                <Flex justify="space-between" align="center" mt={3}>
+                  <Text>Всего: {totalCount}</Text>
 
-                <Flex align="center" gap={3}>
-                  <Button
-                    size="sm"
-                    backgroundColor="teal"
-                    color="white"
-                    disabled={currentPage === 1}
-                    onClick={onPrevPage}
-                  >
-                    <FaArrowLeft />
-                    Назад
-                  </Button>
+                  <Flex align="center" gap={3}>
+                    <Button
+                      size="sm"
+                      backgroundColor="teal"
+                      color="white"
+                      disabled={currentPage === 1}
+                      onClick={onPrevPage}
+                    >
+                      <FaArrowLeft />
+                      Назад
+                    </Button>
 
-                  <Text>
-                    Страница {currentPage} из {totalPages}
-                  </Text>
+                    <Text>
+                      Страница {currentPage} из {totalPages}
+                    </Text>
 
-                  <Button
-                    size="sm"
-                    backgroundColor="teal"
-                    color="white"
-                    disabled={currentPage === totalPages}
-                    onClick={onNextPage}
-                  >
-                    Вперёд
-                    <FaArrowRight />
-                  </Button>
+                    <Button
+                      size="sm"
+                      backgroundColor="teal"
+                      color="white"
+                      disabled={currentPage === totalPages}
+                      onClick={onNextPage}
+                    >
+                      Вперёд
+                      <FaArrowRight />
+                    </Button>
+                  </Flex>
                 </Flex>
-              </Flex>
-            </Table.Cell>
-          </Table.Row>
-        </Table.Footer>
+              </Table.Cell>
+            </Table.Row>
+          </Table.Footer>
+        )}
+        {isSearching && (
+          <Table.Footer>
+            <Table.Row>
+              <Table.Cell colSpan={5}>
+                <Flex justify="center" align="center" mt={3}>
+                  <Text>Найдено: {patients.length}</Text>
+                </Flex>
+              </Table.Cell>
+            </Table.Row>
+          </Table.Footer>
+        )}
       </Table.Root>
     </Box>
   );

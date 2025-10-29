@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 export function usePatientsPagination(totalCount: number, pageSize = 10) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -9,11 +9,21 @@ export function usePatientsPagination(totalCount: number, pageSize = 10) {
     if (currentPage > totalPages) setCurrentPage(totalPages);
   }, [totalPages, currentPage]);
 
-  const gotoPage = (page: number) =>
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  const gotoPage = useCallback(
+    (page: number) => setCurrentPage(Math.max(1, Math.min(page, totalPages))),
+    [totalPages]
+  );
 
-  const nextPage = () => gotoPage(currentPage + 1);
-  const prevPage = () => gotoPage(currentPage - 1);
+  const nextPage = useCallback(
+    () => gotoPage(currentPage + 1),
+    [gotoPage, currentPage]
+  );
+  const prevPage = useCallback(
+    () => gotoPage(currentPage - 1),
+    [gotoPage, currentPage]
+  );
+
+  const resetToFirstPage = useCallback(() => setCurrentPage(1), []);
 
   return {
     currentPage,
@@ -21,5 +31,6 @@ export function usePatientsPagination(totalCount: number, pageSize = 10) {
     nextPage,
     prevPage,
     gotoPage,
+    resetToFirstPage,
   };
 }

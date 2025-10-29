@@ -2,7 +2,7 @@ import { Box, Flex, VStack, Text, Button } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { MdRefresh } from "react-icons/md";
 import ProfileInfo from "@/widgets/ProfileInfo";
-import AddAppointment from "@/widgets/AddAppointment";
+// import AddAppointment from "@/widgets/AddAppointment";
 import ReceptionDoneAppointments from "@/widgets/ReceptionDoneAppointments";
 import { useAppDispatch, useAppSelector } from "@/shared/model/hooks";
 import { fetchProfile } from "@/entities/profile/model/profileSlice";
@@ -72,7 +72,6 @@ const ReceptionPage = () => {
       {/* Правая колонка (контент) */}
       <Box flex="1" overflowY="auto" p={4}>
         <PatientsTableContainer />
-        <AddAppointment />
         <ReceptionDoneAppointments />
       </Box>
     </Flex>

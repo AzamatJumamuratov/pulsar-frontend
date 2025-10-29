@@ -16,23 +16,29 @@ export const fetchDefaultPatients = () => fetchPatients({ page: 1, limit: 10 });
 
 export const fetchPatients = createAsyncThunk<
   PatientsDataType,
-  { page: number; limit: number },
+  { page: number; limit: number; search?: string; phone?: string },
   { rejectValue: string }
->("patients/fetchPatients", async ({ page, limit }, { rejectWithValue }) => {
-  try {
-    const skip = (page - 1) * limit;
-    const response = await api.get<PatientsDataType>("/patients/", {
-      params: { skip, limit },
-    });
-    return response.data;
-  } catch (error: any) {
-    const detail =
-      error?.response?.data?.detail ||
-      error?.message ||
-      "Не удалось загрузить список пациентов.";
-    return rejectWithValue(detail);
+>(
+  "patients/fetchPatients",
+  async ({ page, limit, search, phone }, { rejectWithValue }) => {
+    try {
+      const skip = (page - 1) * limit;
+      const params: any = { skip, limit };
+      if (search) params.search = search;
+      if (phone) params.phone = phone;
+      const response = await api.get<PatientsDataType>("/patients/", {
+        params,
+      });
+      return response.data;
+    } catch (error: any) {
+      const detail =
+        error?.response?.data?.detail ||
+        error?.message ||
+        "Не удалось загрузить список пациентов.";
+      return rejectWithValue(detail);
+    }
   }
-});
+);
 
 const patientsSlice = createSlice({
   name: "patients",

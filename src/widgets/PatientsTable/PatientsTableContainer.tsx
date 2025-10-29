@@ -1,9 +1,10 @@
 import { useAppDispatch, useAppSelector } from "@/shared/model/hooks";
 import { fetchPatients } from "@/entities/patient/model/patientsSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePatientsPagination } from "./model/usePatientsPagination";
 import PatientsTableSkeleton from "./ui/PatientsTableSkeleton";
 import PatientTableView from "./ui/PatientsTableView";
+import PatientSearch from "./ui/PatientSearch";
 
 export default function PatientsTableContainer() {
   const dispatch = useAppDispatch();
@@ -14,30 +15,56 @@ export default function PatientsTableContainer() {
   } = useAppSelector((s) => s.patients);
   const profile = useAppSelector((s) => s.profile.data);
 
-  const { currentPage, totalPages, nextPage, prevPage } = usePatientsPagination(
-    total_count,
-    10
-  );
+  const [search, setSearch] = useState("");
+  const [phone, setPhone] = useState("");
+
+  const isSearching = search || phone;
+
+  const { currentPage, totalPages, nextPage, prevPage, resetToFirstPage } =
+    usePatientsPagination(total_count, isSearching ? total_count : 10);
 
   useEffect(() => {
-    dispatch(fetchPatients({ page: currentPage, limit: 10 }));
-  }, [dispatch, currentPage]);
+    dispatch(
+      fetchPatients({
+        page: isSearching ? 1 : currentPage,
+        limit: isSearching ? total_count : 10,
+        search: search || undefined,
+        phone: phone || undefined,
+      })
+    );
+  }, [dispatch, currentPage, search, phone, isSearching, total_count]);
+
+  const handleSearch = (newSearch: string, newPhone: string) => {
+    setSearch(newSearch);
+    setPhone(newPhone);
+    resetToFirstPage();
+  };
+
+  const handleClear = () => {
+    setSearch("");
+    setPhone("");
+    resetToFirstPage();
+  };
 
   if (loading || !profile) return <PatientsTableSkeleton />;
 
   return (
-    <PatientTableView
-      profile={profile}
-      loading={loading}
-      error={error}
-      patients={patients}
-      totalCount={total_count}
-      pageSize={10}
-      currentPage={currentPage}
-      totalPages={totalPages}
-      onPrevPage={prevPage}
-      onNextPage={nextPage}
-      onGotoPage={() => {}}
-    />
+    <>
+      <PatientSearch onSearch={handleSearch} onClear={handleClear} />
+      <PatientTableView
+        profile={profile}
+        loading={loading}
+        error={error}
+        patients={patients}
+        totalCount={total_count}
+        pageSize={10}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPrevPage={prevPage}
+        onNextPage={nextPage}
+        onGotoPage={() => {}}
+        isSearching={!!isSearching}
+      />
+    </>
   );
 }
