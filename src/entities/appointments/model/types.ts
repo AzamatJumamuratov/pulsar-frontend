@@ -14,9 +14,8 @@ export interface AppointmentRequest {
   patient_id: string;
   date: string;
   notes: string;
-  cost: number;
+  cost: number | null;
 }
-
 export interface AppointmentsState {
   data: Appointment[];
   loading: boolean;

@@ -52,14 +52,36 @@ export default function AppointmentsList() {
       </Box>
     );
 
+  const confirmedAppointments = appointments.filter((a) => a.status == "done");
+  const notConfirmedAppointments = appointments.filter(
+    (a) => a.status == "scheduled"
+  );
+
   return (
     <Box mt={8}>
-      <Heading size="md" mb={4}>
+      <Heading size="md" mb={6}>
         Список приёмов
       </Heading>
 
+      <Heading size="sm" mb={3}>
+        Запланированные
+      </Heading>
+      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={5} mb={10}>
+        {notConfirmedAppointments.map((a) => (
+          <AppointmentCard
+            key={a.id}
+            appointment={a}
+            onConfirm={handleConfirm}
+            onSaveCost={handleUpdateCost}
+          />
+        ))}
+      </SimpleGrid>
+
+      <Heading size="sm" mb={3}>
+        Завершённые
+      </Heading>
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={5}>
-        {appointments.map((a) => (
+        {confirmedAppointments.map((a) => (
           <AppointmentCard
             key={a.id}
             appointment={a}

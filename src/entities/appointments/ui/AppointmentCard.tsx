@@ -16,11 +16,12 @@ import {
   FiX,
 } from "react-icons/fi";
 import { useColorModeValue } from "@/components/ui/color-mode";
-import { FormattedNumberInput } from "@/shared/ui/FormattedNumberInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Appointment } from "../model/types";
 import ShowMoreAppointment from "@/widgets/AppointmentsList/ShowMoreAppoiment";
 import AppointmentStatusBadge from "@/entities/appointments/ui/AppointmentStatusBadge";
+import ValidatedCostInput from "@/shared/ui/ValidatedCostInput";
+import { FormProvider, useForm } from "react-hook-form";
 
 interface AppointmentCardProps {
   appointment: Appointment;
@@ -34,7 +35,6 @@ export const AppointmentCard = ({
   onSaveCost,
 }: AppointmentCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editedCost, setEditedCost] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -42,11 +42,16 @@ export const AppointmentCard = ({
   const bgCard = useColorModeValue("white", "gray.800");
   const textMuted = useColorModeValue("gray.600", "gray.400");
 
-  const handleSave = async () => {
-    const parsed = Number(editedCost.replace(/\s+/g, "").replace(/,/g, "."));
-    if (!isFinite(parsed) || parsed < 0) return;
+  const form = useForm<{ cost: number | null }>({
+    defaultValues: { cost: appointment.cost },
+  });
+
+  const { handleSubmit, reset } = form;
+
+  const handleSave = async (data: { cost: number | null }) => {
+    if (data.cost === null) return;
     setIsSaving(true);
-    await onSaveCost(appointment.id, parsed);
+    await onSaveCost(appointment.id, data.cost);
     setIsSaving(false);
     setIsEditing(false);
   };
@@ -56,6 +61,17 @@ export const AppointmentCard = ({
     await onConfirm(appointment.id);
     setIsUpdating(false);
   };
+
+  const cancelEdit = () => {
+    reset({ cost: appointment.cost });
+    setIsEditing(false);
+  };
+
+  useEffect(() => {
+    if (appointment.status === "done" && isEditing) {
+      cancelEdit();
+    }
+  }, [appointment.status]);
 
   return (
     <Card.Root
@@ -84,13 +100,13 @@ export const AppointmentCard = ({
       )}
 
       <Card.Header pb={2}>
-        <Flex justify="space-between" align="center">
-          <Box>
-            <Heading size="sm">{appointment.patient_full_name}</Heading>
-            <Text fontSize="sm" color={textMuted}>
-              Пациент ID: {appointment.patient_id}
-            </Text>
-          </Box>
+        <Box mb={1}>
+          <Heading size="sm">{appointment.patient_full_name}</Heading>
+        </Box>
+        <Flex justifyContent={"space-between"} alignItems={"baseline"}>
+          <Text fontSize="sm" color={textMuted}>
+            Пациент ID: {appointment.patient_id}
+          </Text>
           <AppointmentStatusBadge status={appointment.status} />
         </Flex>
       </Card.Header>
@@ -99,7 +115,9 @@ export const AppointmentCard = ({
         <Flex align="center" mb={2}>
           <FiCalendar style={{ marginRight: 6 }} />
           <Text fontSize="sm">
-            {new Date(appointment.date).toLocaleString()}
+            {new Date(appointment.date).toLocaleString("ru-RU", {
+              timeZone: "UTC",
+            })}
           </Text>
         </Flex>
 
@@ -111,15 +129,17 @@ export const AppointmentCard = ({
         <Flex align="center" justify="space-between">
           <Flex align="center">
             <FiDollarSign style={{ marginRight: 6 }} />
+
             {isEditing ? (
-              <FormattedNumberInput
-                size="sm"
-                value={editedCost}
-                onChange={(val) => setEditedCost(String(val))}
-                w="100px"
-                disabled={isSaving}
-                placeholder="Стоимость"
-              />
+              <FormProvider {...form}>
+                <form onSubmit={handleSubmit(handleSave)}>
+                  <ValidatedCostInput
+                    name="cost"
+                    required="Стоимость обязательна"
+                    placeholder="Стоимость (сум)"
+                  />
+                </form>
+              </FormProvider>
             ) : (
               <Text fontSize="sm" fontWeight="medium">
                 {Number(appointment.cost).toLocaleString("ru-RU")} сум
@@ -127,13 +147,13 @@ export const AppointmentCard = ({
             )}
           </Flex>
 
-          {isEditing ? (
+          {appointment.status === "done" ? null : isEditing ? (
             <Flex gap={1}>
               <IconButton
                 aria-label="Сохранить"
                 size="xs"
                 colorScheme="green"
-                onClick={handleSave}
+                onClick={handleSubmit(handleSave)}
                 disabled={isSaving}
               >
                 <FiCheck />
@@ -142,7 +162,7 @@ export const AppointmentCard = ({
                 aria-label="Отменить"
                 size="xs"
                 colorScheme="red"
-                onClick={() => setIsEditing(false)}
+                onClick={cancelEdit}
                 disabled={isSaving}
               >
                 <FiX />
@@ -155,7 +175,7 @@ export const AppointmentCard = ({
               variant="ghost"
               onClick={() => {
                 setIsEditing(true);
-                setEditedCost(String(appointment.cost));
+                reset({ cost: appointment.cost });
               }}
             >
               <FiEdit2 />

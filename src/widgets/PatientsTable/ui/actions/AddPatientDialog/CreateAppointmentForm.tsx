@@ -2,13 +2,15 @@
 
 import { Button, Box, Dialog, Input, VStack } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { useAppSelector } from "@/shared/model/hooks";
 import CustomSelect from "@/shared/ui/CustomSelect";
 import type { PatientData } from "@/entities/patient/model/types";
 import type { AppointmentRequest } from "@/entities/appointments/model/types";
 import { useState } from "react";
-import { FormattedNumberInput } from "@/shared/ui/FormattedNumberInput";
+import { DateTimeInput } from "@/shared/ui/DateTimeInput";
+import ValidatedSelect from "@/shared/ui/ValidatedSelect";
+import ValidatedCostInput from "@/shared/ui/ValidatedCostInput";
 
 interface CreateAppointmentFormProps {
   onClose: () => void;
@@ -54,11 +56,17 @@ export function CreateAppointmentForm({
       doctor_id: "",
       date: "",
       notes: "",
-      cost: 0,
+      cost: null, // ← вместо 0
     },
   });
 
-  const { handleSubmit, register, setValue, watch } = form;
+  const {
+    handleSubmit,
+    register,
+    setValue,
+    formState: { errors },
+    watch,
+  } = form;
 
   const onSubmit = async (data: AppointmentRequest) => {
     const appointmentData: AppointmentRequest = {
@@ -81,58 +89,58 @@ export function CreateAppointmentForm({
       exit={variants.exit}
       transition={variants.transition}
     >
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Dialog.Body>
-          <VStack align="stretch" gap={4}>
-            <CustomSelect
-              placeholder="Выберите пациента"
-              value={watch("patient_id")}
-              items={patientOptions}
-              onChange={(v) => setValue("patient_id", v)}
-            />
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Dialog.Body>
+            <VStack align="stretch" gap={4}>
+              <CustomSelect
+                placeholder="Выберите пациента"
+                value={watch("patient_id")}
+                items={patientOptions}
+                onChange={(v) => setValue("patient_id", v)}
+              />
 
-            <CustomSelect
-              placeholder="Выберите врача"
-              value={watch("doctor_id")}
-              items={doctorOptions}
-              onChange={(v) => setValue("doctor_id", v)}
-            />
+              {errors.patient_id && (
+                <Box color="red.500" fontSize="sm">
+                  {errors.patient_id?.message}
+                </Box>
+              )}
 
-            <Input
-              type="datetime-local"
-              {...register("date", { required: true })}
-            />
-            <Input placeholder="Заметки" {...register("notes")} />
-            <FormattedNumberInput
-              placeholder="Стоимость (сум)"
-              value={watch("cost")}
-              onChange={(val) =>
-                setValue("cost", Number(val), { shouldValidate: true })
-              }
-            />
-            {/* <Input
-              placeholder="Стоимость"
-              type="number"
-              {...register("cost", { valueAsNumber: true })}
-            /> */}
-          </VStack>
-        </Dialog.Body>
-        <Dialog.Footer>
-          <Box display="flex" justifyContent="space-between" w="100%">
-            <Button
-              variant="ghost"
-              type="button"
-              disabled={isSubmitting}
-              onClick={onClose}
-            >
-              Закрыть
-            </Button>
-            <Button colorPalette="teal" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Создание..." : "Создать приём"}
-            </Button>
-          </Box>
-        </Dialog.Footer>
-      </form>
+              <ValidatedSelect
+                name="doctor_id"
+                placeholder="Выберите Врача"
+                required="Выберите врача обязательно."
+                options={doctorOptions}
+              />
+
+              <DateTimeInput name="date" required="укажите время" />
+
+              <Input placeholder="Заметки" {...register("notes")} />
+
+              <ValidatedCostInput
+                name="cost"
+                placeholder="Стоимость (сум)"
+                required="стоимость обязательное."
+              />
+            </VStack>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Box display="flex" justifyContent="space-between" w="100%">
+              <Button
+                variant="ghost"
+                type="button"
+                disabled={isSubmitting}
+                onClick={onClose}
+              >
+                Закрыть
+              </Button>
+              <Button colorPalette="teal" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Создание..." : "Создать приём"}
+              </Button>
+            </Box>
+          </Dialog.Footer>
+        </form>
+      </FormProvider>
     </motion.div>
   );
 }

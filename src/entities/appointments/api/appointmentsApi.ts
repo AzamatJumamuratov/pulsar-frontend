@@ -31,7 +31,9 @@ export const appointmentsApi = {
         notes,
         cost,
       });
-    } catch {}
+    } catch {
+      //лучше пусто было
+    }
   },
 
   async updateCost(

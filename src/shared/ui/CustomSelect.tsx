@@ -3,7 +3,7 @@
 
 import { Select, createListCollection } from "@chakra-ui/react";
 
-interface Option {
+export interface Option {
   label: string;
   value: string;
 }

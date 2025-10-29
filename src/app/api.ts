@@ -1,42 +1,46 @@
 import axios from "axios";
 
+const ACCESS_KEY = "access_token";
+const REFRESH_KEY = "refresh_token";
+const TYPE_KEY = "token_type";
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
 });
 
-// Функция получения токенов из localStorage
-export const getTokens = () => {
-  const access = localStorage.getItem("accessToken");
-  const refresh = localStorage.getItem("refreshToken");
-  return { access, refresh };
-};
+/* Получение токенов */
+export const getTokens = () => ({
+  access: localStorage.getItem(ACCESS_KEY),
+  refresh: localStorage.getItem(REFRESH_KEY),
+  token_type: localStorage.getItem(TYPE_KEY),
+});
 
-// Функция сохранения токенов
+/* Сохранение токенов */
 export const saveTokens = (
   access: string,
   refresh: string,
   token_type: string = "bearer"
 ) => {
-  localStorage.setItem("access_token", access);
-  localStorage.setItem("refresh_token", refresh);
-  localStorage.setItem("token_type", token_type);
+  localStorage.setItem(ACCESS_KEY, access);
+  localStorage.setItem(REFRESH_KEY, refresh);
+  localStorage.setItem(TYPE_KEY, token_type);
 };
 
-// хехехехе Функция удаление токенов зачем я комменчу очевидные вещи :(
+/* Очистка токенов */
 export const clearTokens = () => {
-  localStorage.removeItem("access_token");
-  localStorage.removeItem("refresh_token");
-  localStorage.removeItem("token_type");
+  localStorage.removeItem(ACCESS_KEY);
+  localStorage.removeItem(REFRESH_KEY);
+  localStorage.removeItem(TYPE_KEY);
 };
 
-// Флаг для избежания повторных запросов
+/* Предотвращение множественных refresh-запросов */
 let isRefreshing = false;
 let failedQueue: {
   resolve: (token: string) => void;
-  reject: (error: any) => void;
+  reject: (error: unknown) => void;
 }[] = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) prom.reject(error);
     else prom.resolve(token!);
@@ -44,17 +48,16 @@ const processQueue = (error: any, token: string | null = null) => {
   failedQueue = [];
 };
 
-// Добавляем accessToken к каждому запросу
-// Добавляем токен к каждому запросу
+/* Добавляем Authorization */
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
+  const token = localStorage.getItem(ACCESS_KEY);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Обработка 401 и автоматическое обновление токена
+/* Интерцептор для обновления токена */
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -75,25 +78,29 @@ api.interceptors.response.use(
 
       const { refresh } = getTokens();
 
+      if (!refresh) {
+        clearTokens();
+        window.location.href = "/auth/login";
+        return Promise.reject(error);
+      }
+
       try {
         const res = await axios.post(
           `${import.meta.env.VITE_BASE_URL}/auth/refresh`,
-          { refresh }
+          { refresh_token: refresh }
         );
 
-        const newAccess = res.data.accessToken;
-        const newRefresh = res.data.refreshToken;
+        const { access_token, refresh_token, token_type } = res.data;
 
-        saveTokens(newAccess, newRefresh);
-        api.defaults.headers.common.Authorization = `Bearer ${newAccess}`;
-        processQueue(null, newAccess);
+        saveTokens(access_token, refresh_token, token_type);
+        api.defaults.headers.common.Authorization = `Bearer ${access_token}`;
+        processQueue(null, access_token);
 
         return api(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        window.location.href = "/auth/login"; // редирект на логин
+        clearTokens();
+        window.location.href = "/auth/login";
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
