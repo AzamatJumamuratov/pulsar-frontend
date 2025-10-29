@@ -20,6 +20,9 @@ export interface AppointmentsState {
   data: Appointment[];
   loading: boolean;
   error: string | null;
+  receptionDone: Appointment[];
+  receptionDoneLoading: boolean;
+  receptionDoneError: string | null;
 }
 
 export type appointmentStatus = "scheduled" | "done";

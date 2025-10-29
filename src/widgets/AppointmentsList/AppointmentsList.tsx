@@ -5,7 +5,10 @@ import { fetchAppointmentsList } from "@/entities/appointments/model/appointment
 import { useColorModeValue } from "@/components/ui/color-mode";
 
 import { AppointmentCard } from "@/entities/appointments/ui/AppointmentCard";
-import { appointmentsApi } from "@/entities/appointments/api/appointmentsApi";
+import {
+  confirmAppointment,
+  updateCost,
+} from "@/entities/appointments/api/appointmentsApi";
 
 export default function AppointmentsList() {
   const dispatch = useAppDispatch();
@@ -22,12 +25,12 @@ export default function AppointmentsList() {
   }, [dispatch]);
 
   const handleConfirm = async (id: number) => {
-    await appointmentsApi.confirmAppointment(id);
+    await confirmAppointment(id);
     dispatch(fetchAppointmentsList());
   };
 
   const handleUpdateCost = async (id: number, cost: number) => {
-    await appointmentsApi.updateCost(id, cost);
+    await updateCost(id, cost);
     dispatch(fetchAppointmentsList());
   };
 

@@ -6,6 +6,9 @@ const initialState: AppointmentsState = {
   data: [],
   loading: false,
   error: null,
+  receptionDone: [],
+  receptionDoneLoading: false,
+  receptionDoneError: null,
 };
 
 export const fetchAppointmentsList = createAsyncThunk<
@@ -24,6 +27,28 @@ export const fetchAppointmentsList = createAsyncThunk<
     return rejectWithValue(detail);
   }
 });
+
+export const fetchReceptionDoneAppointments = createAsyncThunk<
+  Appointment[],
+  void,
+  { rejectValue: string }
+>(
+  "appointments/fetchReceptionDoneAppointments",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get<Appointment[]>(
+        "appointments/reception/done"
+      );
+      return response.data;
+    } catch (error: any) {
+      const detail =
+        error?.response?.data?.detail ||
+        error?.message ||
+        "Не удалось загрузить список завершённых назначений";
+      return rejectWithValue(detail);
+    }
+  }
+);
 
 const appointmentsSlice = createSlice({
   name: "appointments",
@@ -48,6 +73,19 @@ const appointmentsSlice = createSlice({
         state.loading = false;
         state.error =
           action.payload || "Ошибка при загрузке списка Назначений.";
+      })
+      .addCase(fetchReceptionDoneAppointments.pending, (state) => {
+        state.receptionDoneLoading = true;
+        state.receptionDoneError = null;
+      })
+      .addCase(fetchReceptionDoneAppointments.fulfilled, (state, action) => {
+        state.receptionDoneLoading = false;
+        state.receptionDone = action.payload;
+      })
+      .addCase(fetchReceptionDoneAppointments.rejected, (state, action) => {
+        state.receptionDoneLoading = false;
+        state.receptionDoneError =
+          action.payload || "Ошибка при загрузке завершённых назначений.";
       });
   },
 });

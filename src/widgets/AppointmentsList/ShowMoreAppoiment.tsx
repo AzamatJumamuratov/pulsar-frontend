@@ -36,9 +36,7 @@ export default function ShowMoreAppointment({
     try {
       setLoading(true);
       setError(null);
-      const res = await api.get<PatientData>(
-        `/appointments/patients/${patientId}`
-      );
+      const res = await api.get<PatientData>(`/patients/${patientId}`);
       setPatient(res.data);
     } catch (error: any) {
       console.log(error);

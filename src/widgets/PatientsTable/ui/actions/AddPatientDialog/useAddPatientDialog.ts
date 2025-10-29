@@ -9,7 +9,7 @@ import type {
   PatientData,
 } from "@/entities/patient/model/types";
 import type { AppointmentRequest } from "@/entities/appointments/model/types";
-import { appointmentsApi } from "@/entities/appointments/api/appointmentsApi";
+import { createAppointment } from "@/entities/appointments/api/appointmentsApi";
 import { CreatePatient } from "@/entities/patient/api/patientsApi";
 
 export function useAddPatientDialog() {
@@ -69,7 +69,7 @@ export function useAddPatientDialog() {
 
   const onSubmitAppointment = async (data: AppointmentRequest) => {
     try {
-      await appointmentsApi.createAppointment(data);
+      await createAppointment(data);
       toaster.create({
         title: "Приём успешно создан",
         type: "success",

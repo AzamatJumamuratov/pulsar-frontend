@@ -10,7 +10,7 @@ import { useAppSelector } from "@/shared/model/hooks";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { FormProvider, useForm } from "react-hook-form";
 import type { AppointmentRequest } from "@/entities/appointments/model/types";
-import { appointmentsApi } from "@/entities/appointments/api/appointmentsApi";
+import { createAppointment } from "@/entities/appointments/api/appointmentsApi";
 import { DateTimeInput } from "@/shared/ui/DateTimeInput";
 import { toaster } from "@/components/ui/toaster";
 import ValidatedCostInput from "@/shared/ui/ValidatedCostInput";
@@ -37,7 +37,7 @@ export default function AddAppointment() {
 
   const onSubmit = async (values: AppointmentRequest) => {
     try {
-      await appointmentsApi.createAppointment(values);
+      await createAppointment(values);
       reset();
       toaster.create({
         description: "Прием Успешно Создан!",
