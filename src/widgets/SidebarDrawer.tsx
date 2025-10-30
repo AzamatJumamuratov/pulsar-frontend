@@ -12,7 +12,7 @@ const SidebarDrawer = () => {
       open={isSidebarOpen}
       onOpenChange={(details) => dispatch(setSidebarOpen(details.open))}
       placement="start"
-      size="sm"
+      size={{ base: "xs", md: "md" }}
     >
       <Drawer.Backdrop />
       <Drawer.Positioner>

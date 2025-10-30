@@ -1,7 +1,14 @@
 // src/widgets/AddPatientDialog/AddPatientDialogView.tsx
 "use client";
 
-import { Button, Icon, Box, IconButton, Dialog } from "@chakra-ui/react";
+import {
+  Button,
+  Icon,
+  Box,
+  IconButton,
+  Dialog,
+  Portal,
+} from "@chakra-ui/react";
 import { AnimatePresence } from "framer-motion";
 import { GoPlus } from "react-icons/go";
 import { RxCross1 } from "react-icons/rx";
@@ -122,32 +129,38 @@ export function AddPatientDialogView({
     <>
       <OpenDialogButton onOpenChange={onOpenChange} />
 
-      <Dialog.Root open={isOpen}>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content maxW="650px" p={6}>
-            <DialogHeader
-              currentStep={currentStep}
-              onClose={() => onOpenChange(false)}
-            />
+      <Dialog.Root
+        open={isOpen}
+        placement={"center"}
+        size={{ smDown: "full", mdDown: "xs", md: "lg" }}
+      >
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content maxW="650px" p={6}>
+              <DialogHeader
+                currentStep={currentStep}
+                onClose={() => onOpenChange(false)}
+              />
 
-            <AnimatePresence mode="wait">
-              {currentStep === 1 ? (
-                <PatientFormStep
-                  form={form}
-                  onSubmitPatient={onSubmitPatient}
-                  isSubmitting={isSubmitting}
-                />
-              ) : (
-                <AppointmentFormStep
-                  createdPatient={createdPatient}
-                  onSubmitAppointment={onSubmitAppointment}
-                  onClose={() => onOpenChange(false)}
-                />
-              )}
-            </AnimatePresence>
-          </Dialog.Content>
-        </Dialog.Positioner>
+              <AnimatePresence mode="wait">
+                {currentStep === 1 ? (
+                  <PatientFormStep
+                    form={form}
+                    onSubmitPatient={onSubmitPatient}
+                    isSubmitting={isSubmitting}
+                  />
+                ) : (
+                  <AppointmentFormStep
+                    createdPatient={createdPatient}
+                    onSubmitAppointment={onSubmitAppointment}
+                    onClose={() => onOpenChange(false)}
+                  />
+                )}
+              </AnimatePresence>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
       </Dialog.Root>
     </>
   );

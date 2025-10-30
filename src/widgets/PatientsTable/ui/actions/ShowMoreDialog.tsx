@@ -1,5 +1,12 @@
 import { useColorModeValue } from "@/components/ui/color-mode";
-import { Button, Dialog, Flex, Text, IconButton } from "@chakra-ui/react";
+import {
+  Button,
+  Dialog,
+  Flex,
+  Text,
+  IconButton,
+  Portal,
+} from "@chakra-ui/react";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { type PatientData } from "@/entities/patient/model/types";
 
@@ -27,7 +34,7 @@ export default function ShowMoreDialog({ patientData }: ShowMoreDialogProps) {
   ];
 
   return (
-    <Dialog.Root>
+    <Dialog.Root placement={"center"} size={{ smDown: "full" }}>
       <Dialog.Trigger asChild>
         <IconButton
           aria-label="Показать подробнее"
@@ -40,58 +47,60 @@ export default function ShowMoreDialog({ patientData }: ShowMoreDialogProps) {
         </IconButton>
       </Dialog.Trigger>
 
-      <Dialog.Backdrop />
-      <Dialog.Positioner>
-        <Dialog.Content
-          maxW="600px"
-          p={6}
-          borderRadius="xl"
-          bg={bgColor}
-          boxShadow="lg"
-        >
-          <Dialog.Header>
-            <Dialog.Title fontSize="xl" fontWeight="bold" color={titleColor}>
-              Информация о пациенте
-            </Dialog.Title>
-          </Dialog.Header>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content
+            maxW="600px"
+            p={6}
+            borderRadius="xl"
+            bg={bgColor}
+            boxShadow="lg"
+          >
+            <Dialog.Header>
+              <Dialog.Title fontSize="xl" fontWeight="bold" color={titleColor}>
+                Информация о пациенте
+              </Dialog.Title>
+            </Dialog.Header>
 
-          <Dialog.Body>
-            <Flex direction="column" gap={3}>
-              {patientInfo.map(([label, value]) => (
-                <Flex
-                  key={label}
-                  justify="space-between"
-                  align="center"
-                  gap={6}
-                >
-                  <Text
-                    fontWeight="medium"
-                    color={labelColor}
-                    minW="180px"
-                    textAlign="right"
+            <Dialog.Body>
+              <Flex direction="column" gap={3}>
+                {patientInfo.map(([label, value]) => (
+                  <Flex
+                    key={label}
+                    justify="space-between"
+                    align="center"
+                    gap={6}
                   >
-                    {label}
-                  </Text>
-                  <Text
-                    fontWeight="semibold"
-                    color={valueColor}
-                    textAlign="left"
-                    flex="1"
-                  >
-                    {value}
-                  </Text>
-                </Flex>
-              ))}
-            </Flex>
-          </Dialog.Body>
+                    <Text
+                      fontWeight="medium"
+                      color={labelColor}
+                      minW="180px"
+                      textAlign="right"
+                    >
+                      {label}
+                    </Text>
+                    <Text
+                      fontWeight="semibold"
+                      color={valueColor}
+                      textAlign="left"
+                      flex="1"
+                    >
+                      {value}
+                    </Text>
+                  </Flex>
+                ))}
+              </Flex>
+            </Dialog.Body>
 
-          <Dialog.Footer justifyContent="flex-end">
-            <Dialog.ActionTrigger asChild>
-              <Button colorPalette="teal">Закрыть</Button>
-            </Dialog.ActionTrigger>
-          </Dialog.Footer>
-        </Dialog.Content>
-      </Dialog.Positioner>
+            <Dialog.Footer justifyContent="flex-end">
+              <Dialog.ActionTrigger asChild>
+                <Button colorPalette="teal">Закрыть</Button>
+              </Dialog.ActionTrigger>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
     </Dialog.Root>
   );
 }

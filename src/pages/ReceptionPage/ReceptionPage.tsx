@@ -75,7 +75,7 @@ const ReceptionPage = () => {
       <SidebarDrawer />
 
       {/* Правая колонка (контент) */}
-      <Box flex="1" overflowY="auto" p={4} pl={{ base: 12, md: 4 }}>
+      <Box flex="1" overflowY="auto" p={4}>
         <PatientsTableContainer />
         <ReceptionDoneAppointments />
       </Box>
