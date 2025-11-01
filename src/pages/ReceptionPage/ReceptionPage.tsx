@@ -10,21 +10,26 @@ import { fetchProfile } from "@/entities/profile/model/profileSlice";
 import { fetchPatients } from "@/entities/patient/model/patientsSlice";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import { fetchDoctorsList } from "@/entities/doctorsList/model/doctorsSlice";
+import { fetchDefaultSurgeries } from "@/entities/surgery/model/surgerySlice";
 
 import { PatientsTableContainer } from "@/widgets/PatientsTable";
+import SurgeriesList from "@/widgets/SurgeriesList/ui/SurgeriesList";
 
 const ReceptionPage = () => {
   const dispatch = useAppDispatch();
   const { error: profileError } = useAppSelector((s) => s.profile);
   const { error: patientsError } = useAppSelector((s) => s.patients);
   const { error: doctorsListError } = useAppSelector((s) => s.doctorsList);
+  const { error: surgeriesError } = useAppSelector((s) => s.surgeries);
 
-  const hasError = profileError || patientsError || doctorsListError;
+  const hasError =
+    profileError || patientsError || doctorsListError || surgeriesError;
 
   useEffect(() => {
     dispatch(fetchProfile());
     dispatch(fetchPatients({ page: 1, limit: 10 }));
     dispatch(fetchDoctorsList());
+    dispatch(fetchDefaultSurgeries());
   }, [dispatch]);
 
   if (hasError) {
@@ -78,6 +83,7 @@ const ReceptionPage = () => {
       <Box flex="1" overflowY="auto" p={4}>
         <PatientsTableContainer />
         <ReceptionDoneAppointments />
+        <SurgeriesList />
       </Box>
     </Flex>
   );

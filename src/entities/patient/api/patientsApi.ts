@@ -1,5 +1,9 @@
 import api from "@/app/api";
-import type { PatientCreateAndEditRequest, PatientData } from "../model/types";
+import type {
+  PatientCreateAndEditRequest,
+  PatientData,
+  PatientsDataType,
+} from "../model/types";
 import { toaster } from "@/components/ui/toaster";
 
 export async function CreatePatient(
@@ -51,5 +55,24 @@ export async function DeletePatient(
       type: "error",
     });
     return null;
+  }
+}
+
+export async function searchPatients(
+  search?: string,
+  phone?: string,
+  skip: number = 0,
+  limit: number = 10
+): Promise<PatientsDataType> {
+  try {
+    const params: any = { skip, limit };
+    if (search) params.search = search;
+    if (phone) params.phone = phone;
+    const response = await api.get<PatientsDataType>("/patients/", { params });
+    return response.data;
+  } catch (err: any) {
+    throw new Error(
+      err?.response?.data?.detail || "Ошибка при поиске пациентов."
+    );
   }
 }

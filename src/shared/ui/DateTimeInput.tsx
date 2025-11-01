@@ -6,6 +6,7 @@ interface ValidatedDateTimeInputProps {
   required?: string;
   type?: "datetime-local" | "date";
   defaultYear?: number;
+  requiredMessage?: string;
 }
 
 export const ValidatedDateTimeInput: React.FC<ValidatedDateTimeInputProps> = ({
@@ -13,6 +14,7 @@ export const ValidatedDateTimeInput: React.FC<ValidatedDateTimeInputProps> = ({
   required = false,
   type = "datetime-local",
   defaultYear = 2025,
+  requiredMessage,
 }) => {
   const {
     register,
@@ -22,6 +24,9 @@ export const ValidatedDateTimeInput: React.FC<ValidatedDateTimeInputProps> = ({
   const fieldError = errors[name] as FieldError | undefined;
 
   const getRequiredMessage = () => {
+    if (requiredMessage) {
+      return required ? requiredMessage : false;
+    }
     if (type === "date") {
       return required ? "Укажите дату рождения" : false;
     }

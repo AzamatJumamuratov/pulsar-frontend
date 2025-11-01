@@ -7,18 +7,22 @@ import { useAppDispatch, useAppSelector } from "@/shared/model/hooks";
 import { fetchProfile } from "@/entities/profile/model/profileSlice";
 import AppointmentsList from "@/widgets/AppointmentsList/AppointmentsList";
 import { fetchAppointmentsList } from "@/entities/appointments/model/appointmentsSlice";
+import { fetchDefaultSurgeries } from "@/entities/surgery/model/surgerySlice";
 import SidebarDrawer from "@/widgets/SidebarDrawer";
+import SurgeriesList from "@/widgets/SurgeriesList/ui/SurgeriesList";
 
 const DoctorPage = () => {
   const dispatch = useAppDispatch();
   const { error: profileError } = useAppSelector((s) => s.profile);
   const { error: appointmentsError } = useAppSelector((s) => s.appointments);
+  const { error: surgeriesError } = useAppSelector((s) => s.surgeries);
 
-  const hasError = profileError || appointmentsError;
+  const hasError = profileError || appointmentsError || surgeriesError;
 
   useEffect(() => {
     dispatch(fetchProfile());
     dispatch(fetchAppointmentsList());
+    dispatch(fetchDefaultSurgeries());
   }, [dispatch]);
 
   if (hasError) {
@@ -77,8 +81,9 @@ const DoctorPage = () => {
         <SidebarDrawer />
 
         {/* Прокручиваемая правая часть */}
-        <Box flex={1} h="full" overflowY="auto" p={4} pl={{ base: 12, md: 4 }}>
+        <Box flex={1} h="full" overflowY="auto" p={4}>
           <AppointmentsList />
+          <SurgeriesList />
         </Box>
       </Flex>
     </Box>
