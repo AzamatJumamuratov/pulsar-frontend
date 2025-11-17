@@ -10,6 +10,7 @@ import {
   type GenderType,
   type PatientCreateAndEditRequest,
 } from "@/entities/patient/model/types";
+import PassportInput from "@/shared/ui/PassportInput";
 
 interface PatientDetailsFormProps {
   form: UseFormReturn<PatientCreateAndEditRequest>;
@@ -87,11 +88,14 @@ export function PatientDetailsForm({ form }: PatientDetailsFormProps) {
           <ValidatedPhoneInput name="phone" required="Обязательное поле" />
         </VStack>
 
-        <ValidatedInput
+        <PassportInput
           label="Паспорт"
-          placeholder="AB1234567"
           register={register("passport", {
             required: "Обязательное поле",
+            pattern: {
+              value: /^[A-Z]{2}\d{7}$/,
+              message: "Паспорт должен быть в формате AA1234567",
+            },
           })}
           error={getFieldError(errors, "passport")}
         />
