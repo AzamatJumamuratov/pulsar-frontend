@@ -1,6 +1,6 @@
-import { Field, Input, HStack } from "@chakra-ui/react";
+import { Field, Input } from "@chakra-ui/react";
 import { useColorModeValue } from "@/components/ui/color-mode";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { FieldError, UseFormRegisterReturn } from "react-hook-form";
 
 interface PassportInputProps {
@@ -17,47 +17,40 @@ const PassportInput = ({
   mb = 4,
 }: PassportInputProps) => {
   const fieldLabelColor = useColorModeValue("gray.700", "gray.300");
-  const [series, setSeries] = useState("");
-  const [number, setNumber] = useState("");
+  const [value, setValue] = useState("");
 
-  useEffect(() => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let input = e.target.value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+
+    // Process input: first 2 chars as letters, next 7 as digits
+    let series = "";
+    let number = "";
+
+    for (let char of input) {
+      if (/[A-Z]/.test(char) && series.length < 2) {
+        series += char;
+      } else if (/[0-9]/.test(char) && number.length < 7) {
+        number += char;
+      }
+    }
+
     const fullValue = series + number;
-    // Simulate onChange for register
+    setValue(fullValue);
     register.onChange({ target: { name: register.name, value: fullValue } });
-  }, [series, number, register]);
-
-  const handleSeriesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-      .replace(/[^a-zA-Z]/g, "")
-      .toUpperCase()
-      .slice(0, 2);
-    setSeries(value);
   };
 
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9]/g, "").slice(0, 7);
-    setNumber(value);
-  };
+  const { onChange, ...rest } = register;
 
   return (
     <Field.Root invalid={!!error} mb={mb}>
       <Field.Label color={fieldLabelColor}>{label}</Field.Label>
-      <HStack>
-        <Input
-          placeholder="AA"
-          value={series}
-          onChange={handleSeriesChange}
-          maxLength={2}
-          flex="1"
-        />
-        <Input
-          placeholder="1234567"
-          value={number}
-          onChange={handleNumberChange}
-          maxLength={7}
-          flex="2"
-        />
-      </HStack>
+      <Input
+        placeholder="AA1234567"
+        value={value}
+        onChange={handleChange}
+        maxLength={9}
+        {...rest}
+      />
       {error && <Field.ErrorText>{error.message}</Field.ErrorText>}
     </Field.Root>
   );
