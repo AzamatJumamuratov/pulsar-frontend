@@ -3,7 +3,7 @@
 import { Portal, Select, createListCollection } from "@chakra-ui/react";
 import type { UseFormSetValue } from "react-hook-form";
 import type { RegisterFormValues } from "@/pages/Auth/RegisterPage";
-import type { UserRole } from "@/entities/profile/model/types";
+import { type UserRole } from "@/entities/profile/model/types";
 
 const roles = createListCollection({
   items: [
@@ -23,7 +23,7 @@ const RoleSelect = ({ setValue }: RoleSelectProps) => {
       size="md"
       width="100%"
       multiple={false}
-      onValueChange={(e) => setValue("role", e.value[0] as UserRole)} // ✅ теперь типобезопасно
+      onValueChange={(e) => setValue("role", e.value[0] as UserRole)}
     >
       <Select.HiddenSelect />
       <Select.Control>

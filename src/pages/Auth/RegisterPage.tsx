@@ -6,7 +6,7 @@ import { toaster } from "@/components/ui/toaster";
 import { Link, useNavigate } from "react-router";
 import { useColorModeValue } from "@/components/ui/color-mode";
 import ValidatedInput from "@/features/auth/ui/ValidatedInput";
-import RoleSelect from "@/shared/RoleSelect/RoleSelect";
+import RoleSelect from "@/shared/ui/RoleSelect";
 import { register as registerUser } from "@/features/auth/api/registerApi";
 import type { UserRole } from "@/entities/profile/model/types";
 

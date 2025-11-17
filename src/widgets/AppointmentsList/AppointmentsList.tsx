@@ -18,10 +18,17 @@ export default function AppointmentsList() {
     error,
   } = useAppSelector((s) => s.appointments);
 
+  const FETCH_INTERVAL = 20000; // Poll every 20 seconds
   const textMuted = useColorModeValue("gray.600", "gray.400");
 
   useEffect(() => {
-    dispatch(fetchAppointmentsList());
+    dispatch(fetchAppointmentsList()); // Initial fetch
+
+    const interval = setInterval(() => {
+      dispatch(fetchAppointmentsList());
+    }, FETCH_INTERVAL);
+
+    return () => clearInterval(interval);
   }, [dispatch]);
 
   const handleConfirm = async (id: number) => {
