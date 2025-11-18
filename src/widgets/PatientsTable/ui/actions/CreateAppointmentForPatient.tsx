@@ -33,7 +33,11 @@ export default function CreateAppointmentForPatient({
     (s) => s.doctorsList
   );
 
-  const methods = useForm<Omit<AppointmentRequest, "patient_id">>();
+  const methods = useForm<Omit<AppointmentRequest, "patient_id">>({
+    defaultValues: {
+      cost: 0,
+    },
+  });
 
   const {
     register,

@@ -68,7 +68,7 @@ export function CreateAppointmentForm({
       doctor_id: "",
       date: "",
       notes: "",
-      cost: null, // ← вместо 0
+      cost: 0,
     },
   });
 

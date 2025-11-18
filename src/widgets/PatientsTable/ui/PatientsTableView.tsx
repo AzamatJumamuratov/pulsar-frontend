@@ -146,6 +146,10 @@ export default function PatientTableView({
                       </Flex>
 
                       <Text fontSize="sm" color={cardColorMode}>
+                        Очередь: {p.queue_number || "-"}
+                      </Text>
+
+                      <Text fontSize="sm" color={cardColorMode}>
                         Создан:{" "}
                         {new Date(p.created_at).toLocaleDateString("ru-RU")}
                       </Text>
@@ -242,6 +246,7 @@ export default function PatientTableView({
               <Table.ColumnHeader>Фамилия и Имя</Table.ColumnHeader>
               {showPhone && <Table.ColumnHeader>Телефон</Table.ColumnHeader>}
               {showPassport && <Table.ColumnHeader>Паспорт</Table.ColumnHeader>}
+              <Table.ColumnHeader>Очередь</Table.ColumnHeader>
               <Table.ColumnHeader>Действия</Table.ColumnHeader>
             </Table.Row>
           </Table.Header>
@@ -252,6 +257,7 @@ export default function PatientTableView({
                 <Table.Cell>{p.full_name}</Table.Cell>
                 {showPhone && <Table.Cell>{p.phone}</Table.Cell>}
                 {showPassport && <Table.Cell>{p.passport}</Table.Cell>}
+                <Table.Cell>{p.queue_number || "-"}</Table.Cell>
                 <Table.Cell
                   display="flex"
                   gap={3}
@@ -274,7 +280,7 @@ export default function PatientTableView({
             <Table.Footer>
               <Table.Row>
                 <Table.Cell
-                  colSpan={(showPhone ? 1 : 0) + (showPassport ? 1 : 0) + 3}
+                  colSpan={(showPhone ? 1 : 0) + (showPassport ? 1 : 0) + 4}
                 >
                   <Flex justify="space-between" align="center" mt={3}>
                     <Text>Всего: {totalCount}</Text>
@@ -315,7 +321,7 @@ export default function PatientTableView({
             <Table.Footer>
               <Table.Row>
                 <Table.Cell
-                  colSpan={(showPhone ? 1 : 0) + (showPassport ? 1 : 0) + 3}
+                  colSpan={(showPhone ? 1 : 0) + (showPassport ? 1 : 0) + 4}
                 >
                   <Flex justify="center" align="center" mt={3}>
                     <Text>Найдено: {patients.length}</Text>

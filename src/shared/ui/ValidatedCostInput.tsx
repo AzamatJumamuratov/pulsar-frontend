@@ -36,7 +36,7 @@ const ValidatedCostInput: React.FC<ValidatedCostInputProps> = ({
       render={({ field }) => {
         const display =
           field.value === null || field.value === undefined
-            ? ""
+            ? "0"
             : formatPrice(field.value);
 
         return (
@@ -48,7 +48,7 @@ const ValidatedCostInput: React.FC<ValidatedCostInputProps> = ({
                 const cleaned = e.target.value.replace(/\D/g, "");
 
                 if (!cleaned) {
-                  field.onChange(null);
+                  field.onChange(0);
                   return;
                 }
 

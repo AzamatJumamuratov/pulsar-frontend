@@ -8,6 +8,7 @@ export interface PatientData {
   passport: string;
   address: string;
   created_at: string;
+  queue_number: number | null;
 }
 
 export interface PatientsDataType {

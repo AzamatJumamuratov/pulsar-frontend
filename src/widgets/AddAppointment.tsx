@@ -24,7 +24,11 @@ export default function AddAppointment() {
     (s) => s.doctorsList
   );
 
-  const methods = useForm<AppointmentRequest>();
+  const methods = useForm<AppointmentRequest>({
+    defaultValues: {
+      cost: 0,
+    },
+  });
 
   const {
     register,
